@@ -33,10 +33,10 @@ X_test = pca.transform(X_test)
 
 explained_variance = pca.explained_variance_ratio_
 
-# 1 principal component to train our algorithm
-pca = PCA(n_components=1)
-X_train = pca.fit_transform(X_train)
-X_test = pca.transform(X_test)
+# # 1 principal component to train our algorithm
+# pca = PCA(n_components=1)
+# X_train = pca.fit_transform(X_train)
+# X_test = pca.transform(X_test)
 
 
 print(X_train)
