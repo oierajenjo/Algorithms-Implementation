@@ -4,8 +4,6 @@ import pandas as pd
 from PCA.reductionPCA import reductionPCA
 from matplotlib import pyplot as plt
 
-os.system('PCA\\reductionPCA.py')
-
 file = os.getcwd() + '\data\\allData.csv'
 
 if not path.exists(file):
@@ -17,8 +15,18 @@ dataset.head()
 # print("DATASET")
 # print(dataset)
 
-PC_X, Y, explained_variance = reductionPCA(dataset)
+PC_X, Y, explained_variance, finalX = reductionPCA(dataset)
 
-plt.bar(explained_variance)
+plt.bar(finalX.columns[:-3], explained_variance)
+plt.title("Principal Components")
+plt.show()
 
-
+val = 0
+n = 0
+for ev in explained_variance:
+    val += ev
+    n += 1
+    if val >= 0.995:
+        break
+print(val)
+print(n)

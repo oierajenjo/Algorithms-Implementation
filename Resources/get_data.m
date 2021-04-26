@@ -16,13 +16,6 @@ end
 % clear list base iFile
 
 %% Get data from each Path
-% data = struct("Test_Nr","","Faulty","","T0","","Tc","","Tsh","",...
-%     "Vexp_real","","Tsup_real","","Tsuc_real","","Tret_real","",...
-%     "Tdis_real","","Psuc_real","","Pdis_real","","Evap_Fan_Speed_real","",...
-%     "Cpr_real","","Cond_fan_speed_real","");
-% data(1,1:15) = ["Test_Nr","Faulty","T0","Tc","Tsh","Vexp_real","Tsup_real",...
-%     "Tsuc_real","Tret_real","Tdis_real","Psuc_real","Pdis_real","Evap_Fan_Speed_real",...
-%     "Cpr_real","Cond_fan_speed_real"];
 n = 1;
 for iFile = 1:numTests
     sim_data = load(lFiles(iFile)).sim_data;
@@ -37,54 +30,60 @@ for iFile = 1:numTests
     
     data(n:nF,1) = sim_data.test_no;
     
-    data(n:nNF,2) = 0;
-    data(nNF+1:nF,2) = 1;
+    data(n:nNF,2) = sim_data.T0(sNF_begin:sNF_end);
+    data(nNF+1:nF,2) = sim_data.T0(sF_begin:sF_end);
     
-    data(n:nNF,3) = sim_data.T0(sNF_begin:sNF_end);
-    data(nNF+1:nF,3) = sim_data.T0(sF_begin:sF_end);
+    data(n:nNF,3) = sim_data.Tc(sNF_begin:sNF_end);
+    data(nNF+1:nF,3) = sim_data.Tc(sF_begin:sF_end);
     
-    data(n:nNF,4) = sim_data.Tc(sNF_begin:sNF_end);
-    data(nNF+1:nF,4) = sim_data.Tc(sF_begin:sF_end);
+    data(n:nNF,4) = sim_data.Tsh(sNF_begin:sNF_end);
+    data(nNF+1:nF,4) = sim_data.Tsh(sF_begin:sF_end);
     
-    data(n:nNF,5) = sim_data.Tsh(sNF_begin:sNF_end);
-    data(nNF+1:nF,5) = sim_data.Tsh(sF_begin:sF_end);
+    data(n:nNF,5) = sim_data.Vexp_real(sNF_begin:sNF_end);
+    data(nNF+1:nF,5) = sim_data.Vexp_real(sF_begin:sF_end);
     
-    data(n:nNF,6) = sim_data.Vexp_real(sNF_begin:sNF_end);
-    data(nNF+1:nF,6) = sim_data.Vexp_real(sF_begin:sF_end);
+    data(n:nNF,6) = sim_data.Tsup_real(sNF_begin:sNF_end);
+    data(nNF+1:nF,6) = sim_data.Tsup_real(sF_begin:sF_end);
     
-    data(n:nNF,7) = sim_data.Tsup_real(sNF_begin:sNF_end);
-    data(nNF+1:nF,7) = sim_data.Tsup_real(sF_begin:sF_end);
+    data(n:nNF,7) = sim_data.Tsuc_real(sNF_begin:sNF_end);
+    data(nNF+1:nF,7) = sim_data.Tsuc_real(sF_begin:sF_end);
     
-    data(n:nNF,8) = sim_data.Tsuc_real(sNF_begin:sNF_end);
-    data(nNF+1:nF,8) = sim_data.Tsuc_real(sF_begin:sF_end);
+    data(n:nNF,8) = sim_data.Tret_real(sNF_begin:sNF_end);
+    data(nNF+1:nF,8) = sim_data.Tret_real(sF_begin:sF_end);
     
-    data(n:nNF,9) = sim_data.Tret_real(sNF_begin:sNF_end);
-    data(nNF+1:nF,9) = sim_data.Tret_real(sF_begin:sF_end);
+    data(n:nNF,9) = sim_data.Tdis_real(sNF_begin:sNF_end);
+    data(nNF+1:nF,9) = sim_data.Tdis_real(sF_begin:sF_end);
     
-    data(n:nNF,10) = sim_data.Tdis_real(sNF_begin:sNF_end);
-    data(nNF+1:nF,10) = sim_data.Tdis_real(sF_begin:sF_end);
+    data(n:nNF,10) = sim_data.Psuc_real(sNF_begin:sNF_end);
+    data(nNF+1:nF,10) = sim_data.Psuc_real(sF_begin:sF_end);
     
-    data(n:nNF,11) = sim_data.Psuc_real(sNF_begin:sNF_end);
-    data(nNF+1:nF,11) = sim_data.Psuc_real(sF_begin:sF_end);
+    data(n:nNF,11) = sim_data.Pdis_real(sNF_begin:sNF_end);
+    data(nNF+1:nF,11) = sim_data.Pdis_real(sF_begin:sF_end);
     
-    data(n:nNF,12) = sim_data.Pdis_real(sNF_begin:sNF_end);
-    data(nNF+1:nF,12) = sim_data.Pdis_real(sF_begin:sF_end);
+    data(n:nNF,12) = sim_data.EvapFanSpeed_real(sNF_begin:sNF_end);
+    data(nNF+1:nF,12) = sim_data.EvapFanSpeed_real(sF_begin:sF_end);
     
-    data(n:nNF,13) = sim_data.EvapFanSpeed_real(sNF_begin:sNF_end);
-    data(nNF+1:nF,13) = sim_data.EvapFanSpeed_real(sF_begin:sF_end);
+    data(n:nNF,13) = sim_data.Cpr_real(sNF_begin:sNF_end);
+    data(nNF+1:nF,13) = sim_data.Cpr_real(sF_begin:sF_end);
     
-    data(n:nNF,14) = sim_data.Cpr_real(sNF_begin:sNF_end);
-    data(nNF+1:nF,14) = sim_data.Cpr_real(sF_begin:sF_end);
+    data(n:nNF,14) = sim_data.CondFanSpeed_real(sNF_begin:sNF_end);
+    data(nNF+1:nF,14) = sim_data.CondFanSpeed_real(sF_begin:sF_end);
     
-    data(n:nNF,15) = sim_data.CondFanSpeed_real(sNF_begin:sNF_end);
-    data(nNF+1:nF,15) = sim_data.CondFanSpeed_real(sF_begin:sF_end);
+    data(n:nNF,15) = 0;
+    data(nNF+1:nF,15) = 1;
+    
+    data(n:nF,16) = sim_data.HeatLoad;
     n = nF+1;
 end 
 % sorted_data = sortrows(data);
-end_data(1,1:15) = ["Test_nr","Faulty","T0","Tc","Tsh","Vexp_real","Tsup_real",...
+% end_data(1,1:16) = ["Test_nr","Faulty","T0","Tc","Tsh","Vexp_real","Tsup_real",...
+%     "Tsuc_real","Tret_real","Tdis_real","EvapFanSpeed_real","Cpr_real",...
+%     "CondFanSpeed_real"];
+end_data(1,1:16) = ["Test_nr","T0","Tc","Tsh","Vexp_real","Tsup_real",...
     "Tsuc_real","Tret_real","Tdis_real","Psuc_real","Pdis_real","EvapFanSpeed_real",...
-    "Cpr_real","CondFanSpeed_real"];
-end_data(2:n,1:15) = data;
+    "Cpr_real","CondFanSpeed_real","Faulty","HeatLoad"];
+end_data(2:n,1:16) = data;
 
 %% Write CSV file
-writematrix(end_data,'allData.csv')
+save = [parDir '\data\allData.csv'];
+writematrix(end_data,save)
