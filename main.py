@@ -14,12 +14,8 @@ dataset = pd.read_csv(file)
 dataset.head()
 # print("DATASET")
 # print(dataset)
-
-PC_X, Y, explained_variance, finalX = reductionPCA(dataset)
-
-plt.bar(finalX.columns[:-3], explained_variance)
-plt.title("Principal Components")
-plt.show()
+conditions = []
+PC_X, Y, explained_variance, finalX = reductionPCA(dataset, conditions)
 
 val = 0
 n = 0

@@ -3,6 +3,7 @@
 
 */allData.csv
 CompressorData/
+results/
 
 # Matlab
 *.asv

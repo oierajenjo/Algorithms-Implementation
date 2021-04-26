@@ -73,16 +73,20 @@ for iFile = 1:numTests
     data(nNF+1:nF,15) = 1;
     
     data(n:nF,16) = sim_data.HeatLoad;
+    data(n:nF,17) = sim_data.Tset;
+    
+    data(n:nNF,18) = sim_data.CprScale(sNF_begin:sNF_end,2);
+    data(nNF+1:nF,18) = sim_data.CprScale(sF_begin:sF_end,2);
     n = nF+1;
 end 
 % sorted_data = sortrows(data);
 % end_data(1,1:16) = ["Test_nr","Faulty","T0","Tc","Tsh","Vexp_real","Tsup_real",...
 %     "Tsuc_real","Tret_real","Tdis_real","EvapFanSpeed_real","Cpr_real",...
 %     "CondFanSpeed_real"];
-end_data(1,1:16) = ["Test_nr","T0","Tc","Tsh","Vexp_real","Tsup_real",...
-    "Tsuc_real","Tret_real","Tdis_real","Psuc_real","Pdis_real","EvapFanSpeed_real",...
-    "Cpr_real","CondFanSpeed_real","Faulty","HeatLoad"];
-end_data(2:n,1:16) = data;
+end_data(1,1:18) = ["Test_nr","T_0","T_c","T_sh","V_exp","T_sup",...
+    "T_suc","T_ret","T_dis","P_suc","P_dis","EvapFanSpeed",...
+    "Cpr","CondFanSpeed","Faulty","HeatLoad", "T_set", "Cpr_Scale"];
+end_data(2:n,1:18) = data;
 
 %% Write CSV file
 save = [parDir '\data\allData.csv'];
