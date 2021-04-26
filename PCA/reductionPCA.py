@@ -1,56 +1,61 @@
 # https://stackabuse.com/implementing-pca-in-python-with-scikit-learn/
-import numpy as np
-import os.path
-from os import path
-import pandas as pd
+from matplotlib import pyplot as plt
 from sklearn.model_selection import train_test_split
+import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
-from sklearn.metrics import confusion_matrix
-from sklearn.metrics import accuracy_score
-from sklearn.ensemble import RandomForestClassifier
 
-path_parent = os.path.dirname(os.getcwd())
-os.chdir(path_parent)
-# print(os.getcwd())
-file = os.getcwd() + '\Resources\\allData.csv'
 
-if not path.exists(file):
-    os.system(os.getcwd() + '\Resources\\retrieveData.py')
+def reductionPCA(dataset):
+    # Preprocessing
+    X = dataset.drop(['Test_nr', 'Faulty'], 1)
+    Y = dataset[['Test_nr', 'Faulty']]
+    # print("X")
+    # print(X)
+    # print("Y")
+    # print(Y)
 
-# Importing Dataset
-# names = ['sepal-length', 'sepal-width', 'petal-length', 'petal-width', 'Class']
-dataset = pd.read_csv(file)
-dataset.head()
-# print("DATASET")
-# print(dataset)
+    # # Splitting the dataset into the Training set and Test set
+    # X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.5)
 
-# Preprocessing
-X = dataset.drop(['Test_nr', 'Faulty'], 1)
-Y = dataset[['Test_nr', 'Faulty']]
-# print("X")
-# print(X)
-# print("Y")
-# print(Y)
+    # STANDARDISE
+    sc = StandardScaler()
+    X = sc.fit_transform(X)
+    # X_test = sc.transform(X_test)
 
-# # Splitting the dataset into the Training set and Test set
-# X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.5)
+    # Applying PCA
+    pca = PCA(n_components=3)
+    PC_X = pca.fit_transform(X)
+    PC_X = pd.DataFrame(data=PC_X,
+                        columns=['principal component 1', 'principal component 2', 'principal component 3'])
+    finalX = pd.concat([PC_X, Y], axis=1)
 
-# STANDARDISE
-sc = StandardScaler()
-X = sc.fit_transform(X)
-# X_test = sc.transform(X_test)
+    # PLOTTING
+    fig = plt.figure(figsize=(8, 8))
+    # ax = plt.axes(projection='3d')
+    ax = fig.add_subplot(1, 1, 1)
+    ax.set_xlabel('Principal Component 1', fontsize=15)
+    ax.set_ylabel('Principal Component 2', fontsize=15)
+    # ax.set_zlabel('Principal Component 3', fontsize=15)
+    ax.set_title('3 component PCA', fontsize=20)
+    targets = [0, 1]
+    colors = ['g', 'r']
+    for target, color in zip(targets, colors):
+        indicesToKeep = finalX['Faulty'] == target
+        ax.scatter(finalX.loc[indicesToKeep, 'principal component 1'],
+                   finalX.loc[indicesToKeep, 'principal component 2'],
+                   # finalX.loc[indicesToKeep, 'principal component 3'],
+                   c=color)
 
-# Applying PCA
-pca = PCA(n_components=3)
-X = pca.fit_transform(X)
-# X_test = pca.transform(X_test)
+    ax.legend(['Not Faulty', 'Faulty'])
+    ax.grid()
+    fig.show()
+    fig.savefig('foo.png')
 
-explained_variance = pca.explained_variance_ratio_
+    explained_variance = pca.explained_variance_ratio_
+    print(PC_X)
+    # print(X_test)
+    print("Explained Variance")
+    print(explained_variance)
 
-print(X)
-# print(X_test)
-
-print("Explained Variance")
-print(explained_variance)
-
+    return PC_X, Y, explained_variance  # , ax

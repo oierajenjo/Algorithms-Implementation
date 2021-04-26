@@ -2,7 +2,10 @@ close all
 clear all
 clc
 %% Get Paths to files
-base = 'CompressorData';
+curDir = pwd;
+parDir = strfind(curDir,filesep);
+parDir = curDir(1:parDir(end)-1);
+base = [parDir '\data\CompressorData'];
 list = dir(fullfile(base, '**', '*.mat'));
 
 numTests = numel(list);
@@ -10,7 +13,7 @@ numTests = numel(list);
 for iFile = 1:numTests
     lFiles(iFile) = append(list(iFile).folder,"\",list(iFile).name);
 end
-    clear list base iFile
+% clear list base iFile
 
 %% Get data from each Path
 % data = struct("Test_Nr","","Faulty","","T0","","Tc","","Tsh","",...
@@ -20,27 +23,62 @@ end
 % data(1,1:15) = ["Test_Nr","Faulty","T0","Tc","Tsh","Vexp_real","Tsup_real",...
 %     "Tsuc_real","Tret_real","Tdis_real","Psuc_real","Pdis_real","Evap_Fan_Speed_real",...
 %     "Cpr_real","Cond_fan_speed_real"];
-n  = 1;
+n = 1;
 for iFile = 1:numTests
     sim_data = load(lFiles(iFile)).sim_data;
-    n2 = n+sim_data.EndSample;
-    data(n:n2,1) = sim_data.test_no;
-    data(n:n+sim_data.FaultSample-2,2) = 0;
-    data(n+sim_data.FaultSample-1:n2,2) = 1;
-    data(n:n2,3) = sim_data.T0;
-    data(n:n2,4) = sim_data.Tc;
-    data(n:n2,5) = sim_data.Tsh;
-    data(n:n2,6) = sim_data.Vexp_real;
-    data(n:n2,7) = sim_data.Tsup_real;
-    data(n:n2,8) = sim_data.Tsuc_real;
-    data(n:n2,9) = sim_data.Tret_real;
-    data(n:n2,10) = sim_data.Tdis_real;
-    data(n:n2,11) = sim_data.Psuc_real;
-    data(n:n2,12) = sim_data.Pdis_real;
-    data(n:n2,13) = sim_data.EvapFanSpeed_real;
-    data(n:n2,14) = sim_data.Cpr_real;
-    data(n:n2,15) = sim_data.CondFanSpeed_real;
-    n = n2+1;
+    
+    sNF_begin = 2000;
+    sNF_end = sim_data.FaultSample-100;
+    sF_begin = sim_data.FaultSample+1500;
+    sF_end = sim_data.EndSample;
+    
+    nNF = n+sNF_end-sNF_begin;
+    nF = nNF+1+sF_end-sF_begin;
+    
+    data(n:nF,1) = sim_data.test_no;
+    
+    data(n:nNF,2) = 0;
+    data(nNF+1:nF,2) = 1;
+    
+    data(n:nNF,3) = sim_data.T0(sNF_begin:sNF_end);
+    data(nNF+1:nF,3) = sim_data.T0(sF_begin:sF_end);
+    
+    data(n:nNF,4) = sim_data.Tc(sNF_begin:sNF_end);
+    data(nNF+1:nF,4) = sim_data.Tc(sF_begin:sF_end);
+    
+    data(n:nNF,5) = sim_data.Tsh(sNF_begin:sNF_end);
+    data(nNF+1:nF,5) = sim_data.Tsh(sF_begin:sF_end);
+    
+    data(n:nNF,6) = sim_data.Vexp_real(sNF_begin:sNF_end);
+    data(nNF+1:nF,6) = sim_data.Vexp_real(sF_begin:sF_end);
+    
+    data(n:nNF,7) = sim_data.Tsup_real(sNF_begin:sNF_end);
+    data(nNF+1:nF,7) = sim_data.Tsup_real(sF_begin:sF_end);
+    
+    data(n:nNF,8) = sim_data.Tsuc_real(sNF_begin:sNF_end);
+    data(nNF+1:nF,8) = sim_data.Tsuc_real(sF_begin:sF_end);
+    
+    data(n:nNF,9) = sim_data.Tret_real(sNF_begin:sNF_end);
+    data(nNF+1:nF,9) = sim_data.Tret_real(sF_begin:sF_end);
+    
+    data(n:nNF,10) = sim_data.Tdis_real(sNF_begin:sNF_end);
+    data(nNF+1:nF,10) = sim_data.Tdis_real(sF_begin:sF_end);
+    
+    data(n:nNF,11) = sim_data.Psuc_real(sNF_begin:sNF_end);
+    data(nNF+1:nF,11) = sim_data.Psuc_real(sF_begin:sF_end);
+    
+    data(n:nNF,12) = sim_data.Pdis_real(sNF_begin:sNF_end);
+    data(nNF+1:nF,12) = sim_data.Pdis_real(sF_begin:sF_end);
+    
+    data(n:nNF,13) = sim_data.EvapFanSpeed_real(sNF_begin:sNF_end);
+    data(nNF+1:nF,13) = sim_data.EvapFanSpeed_real(sF_begin:sF_end);
+    
+    data(n:nNF,14) = sim_data.Cpr_real(sNF_begin:sNF_end);
+    data(nNF+1:nF,14) = sim_data.Cpr_real(sF_begin:sF_end);
+    
+    data(n:nNF,15) = sim_data.CondFanSpeed_real(sNF_begin:sNF_end);
+    data(nNF+1:nF,15) = sim_data.CondFanSpeed_real(sF_begin:sF_end);
+    n = nF+1;
 end 
 % sorted_data = sortrows(data);
 end_data(1,1:15) = ["Test_nr","Faulty","T0","Tc","Tsh","Vexp_real","Tsup_real",...
