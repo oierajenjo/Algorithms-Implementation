@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 file = os.getcwd() + '\data\\allData.csv'
 
 if not path.exists(file):
-    os.system(os.getcwd() + '\data\\retrieveData.py')
+    os.system(os.getcwd() + '\Resources\\retrieveData.py')
 
 # Importing Dataset
 dataset = pd.read_csv(file)

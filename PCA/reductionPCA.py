@@ -19,9 +19,9 @@ def reductionPCA(dataset, conditions):
     X = X.drop('index', axis=1)
     Y = Y.drop('index', axis=1)
     print("X")
-    print(X)
+    print(X.head())
     print("Y")
-    print(Y)
+    print(Y.head())
 
     # STANDARDISE
     sc = StandardScaler()
