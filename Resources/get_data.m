@@ -20,9 +20,10 @@ n = 1;
 for iFile = 1:numTests
     sim_data = load(lFiles(iFile)).sim_data;
     
-    sNF_begin = 2000;
+    sNF_begin = 4000;
     sNF_end = sim_data.FaultSample-100;
-    sF_begin = sim_data.FaultSample+1500;
+    sF_begin = 10000;
+%     sF_begin = sim_data.FaultSample+1500;
     sF_end = sim_data.EndSample;
     
     nNF = n+sNF_end-sNF_begin;
