@@ -15,7 +15,7 @@ dataset.head()
 # print("DATASET")
 # print(dataset)
 accuracy = 0.9995
-pc_x_train, Y_train, pc_x_test, Y_test , explained_variance, pca_train, pca_test = reductionPCA(dataset, accuracy)
+pca_train, pca_test, explained_variance, amount_pcs = reductionPCA(dataset, accuracy)
 
-n = len(pc_x_train.columns)
-classifierRBFN(pc_x_train, pca_train, pca_test, n)
+k = 8
+centroids, W, prediction, score = classifierRBFN(pca_train, pca_test, amount_pcs, k_centroids=k)
