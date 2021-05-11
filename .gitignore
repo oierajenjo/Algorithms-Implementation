@@ -2,6 +2,8 @@
 ### Python template
 
 */allData.csv
+*/trainData.csv
+*/testData.csv
 CompressorData/
 results/
 
