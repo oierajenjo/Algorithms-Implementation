@@ -1,11 +1,11 @@
 # https://stackabuse.com/implementing-pca-in-python-with-scikit-learn/
-import os
+from datetime import datetime
 
-from matplotlib import pyplot as plt
-from sklearn.model_selection import train_test_split
 import pandas as pd
-from sklearn.preprocessing import StandardScaler
+from matplotlib import pyplot as plt
 from sklearn.decomposition import PCA
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 
 
 def reductionPCA(dataset, accuracy):
@@ -14,17 +14,21 @@ def reductionPCA(dataset, accuracy):
                           & ((dataset['Cpr_Scale'] >= 0.9) | (dataset['Cpr_Scale'] == 0.3))]
     X = dataset.drop(['Test_nr', 'Faulty', 'HeatLoad', 'T_set', 'Cpr_Scale'], axis=1)
     Y = dataset[['Test_nr', 'Faulty', 'HeatLoad', 'T_set', 'Cpr_Scale']]
-    Y.reset_index(inplace=True)
-    X.reset_index(inplace=True)
-    X = X.drop('index', axis=1)
-    Y = Y.drop('index', axis=1)
+    X = reset_ind(X)
+    Y = reset_ind(Y)
     print("X")
     print(X.head())
     print("Y")
     print(Y.head())
 
     # Set Test and training data
-    X_tr, X_te, Y_train, Y_test = train_test_split(X, Y, test_size=0.01, random_state=0)
+    X_tr, X_te, Y_train, Y_test = train_test_split(X, Y, test_size=0.01, random_state=42)
+
+    # Remove previous index
+    X_tr = reset_ind(X_tr)
+    Y_train = reset_ind(Y_train)
+    X_te = reset_ind(X_te)
+    Y_test = reset_ind(Y_test)
 
     # STANDARDISE
     sc = StandardScaler()
@@ -47,31 +51,32 @@ def reductionPCA(dataset, accuracy):
     plt.ylabel("Explained Variance Ratio")
     plt.xlabel("Principal Components")
     plt.show()
-    fig.savefig(os.getcwd() + '/results/PC.png')
+    fig.savefig('results/PC(' + datetime.today().strftime("%d%m%Y_%H-%M.%S") + ').png')
 
     val = 0
-    n = 0
+    amount_pcs = 0
     for ev in explained_variance:
         val += ev
-        n += 1
+        amount_pcs += 1
         if val >= accuracy:
             break
     print(val)
-    print(n)
+    print(amount_pcs)
 
     # Applying PCA
-    pca = PCA(n_components=n)
+    pca = PCA(n_components=amount_pcs)
     pc_x_train = pca.fit_transform(X_train)
     pc_x_test = pca.transform(X_test)
     ex_var = pca.explained_variance_ratio_
 
     # PC DataFrame
     columns = ['PC' + str(i) for i in range(1, len(ex_var) + 1)]
+
     pc_x_train = pd.DataFrame(data=pc_x_train, columns=columns)
-    pca_train = pd.concat([pc_x_train, Y_train.reset_index()], axis=1)
+    pca_train = pd.concat([pc_x_train, Y_train], axis=1)
 
     pc_x_test = pd.DataFrame(data=pc_x_test, columns=columns)
-    pca_test = pd.concat([pc_x_test, Y_test.reset_index()], axis=1)
+    pca_test = pd.concat([pc_x_test, Y_test], axis=1)
 
     print("Final PCA X")
     print(pca_train)
@@ -80,9 +85,9 @@ def reductionPCA(dataset, accuracy):
     fig, ax = plotting(pca_train)
     ax.set_title('3 component PCA', fontsize=20)
     fig.show()
-    fig.savefig('results/3d.png')
+    fig.savefig('results/3d(' + datetime.today().strftime("%d%m%Y_%H-%M.%S") + ').png')
 
-    return pc_x_train, Y_train.reset_index(), pc_x_test, Y_test.reset_index(), explained_variance, pca_train, pca_test
+    return pca_train, pca_test, explained_variance, amount_pcs
 
 
 def plotting(pca_train):
@@ -105,3 +110,9 @@ def plotting(pca_train):
     ax.legend(['Not Faulty', 'Faulty'])
     ax.grid()
     return fig, ax
+
+
+def reset_ind(X):
+    X.reset_index(inplace=True)
+    X = X.drop('index', axis=1)
+    return X
