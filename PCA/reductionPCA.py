@@ -1,4 +1,5 @@
 # https://stackabuse.com/implementing-pca-in-python-with-scikit-learn/
+import os
 from datetime import datetime
 
 import pandas as pd
@@ -8,32 +9,55 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
 
-def reductionPCA(dataset, accuracy):
-    # Preprocessing
-    dataset = dataset.loc[(dataset['HeatLoad'] == 10000) & ((dataset['T_set'] == 0) | (dataset['T_set'] == 12))
-                          & ((dataset['Cpr_Scale'] >= 0.9) | (dataset['Cpr_Scale'] == 0.3))]
-    X = dataset.drop(['Test_nr', 'Faulty', 'HeatLoad', 'T_set', 'Cpr_Scale'], axis=1)
-    Y = dataset[['Test_nr', 'Faulty', 'HeatLoad', 'T_set', 'Cpr_Scale']]
+def read_csv_data(file):
+    df = pd.read_csv(file)
+    df.head()
+    X, Y = preprocess_data(df)
+    return X, Y
+
+
+def save_csv_file(name, df):
+    df.to_csv(os.getcwd() + name, index=False, header=True)
+
+
+def preprocess_data(df):
+    X = df.drop(['Test_nr', 'Faulty', 'HeatLoad', 'T_set', 'Cpr_Scale'], axis=1)
+    Y = df[['Test_nr', 'Faulty', 'HeatLoad', 'T_set', 'Cpr_Scale']]
     X = reset_ind(X)
     Y = reset_ind(Y)
+    return X, Y
+
+
+def set_train_setData(df):
+    df = df.loc[(df['HeatLoad'] == 10000) & ((df['T_set'] == 0) | (df['T_set'] == 12))
+                & ((df['Cpr_Scale'] >= 0.9) | (df['Cpr_Scale'] == 0.3))]
+    # Preprocessing
+    X, Y = preprocess_data(df)
     print("X")
     print(X.head())
     print("Y")
     print(Y.head())
 
     # Set Test and training data
-    X_tr, X_te, Y_train, Y_test = train_test_split(X, Y, test_size=0.01, random_state=42)
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.01, random_state=42)
 
     # Remove previous index
-    X_tr = reset_ind(X_tr)
+    X_train = reset_ind(X_train)
     Y_train = reset_ind(Y_train)
-    X_te = reset_ind(X_te)
+    X_test = reset_ind(X_test)
     Y_test = reset_ind(Y_test)
 
+    save_csv_file('\data\\trainData.csv', pd.concat([X_train, Y_train], axis=1))
+    save_csv_file('\data\\testData.csv', pd.concat([X_test, Y_test], axis=1))
+
+    return X_train, Y_train, X_test, Y_test
+
+
+def reductionPCA(X_train, Y_train, X_test, Y_test, accuracy):
     # STANDARDISE
     sc = StandardScaler()
-    X_train = sc.fit_transform(X_tr)
-    X_test = sc.transform(X_te)
+    X_train = sc.fit_transform(X_train)
+    X_test = sc.transform(X_test)
 
     # Amount of PCs to keep
     # Applying PCA
