@@ -1,5 +1,6 @@
 # https://stackabuse.com/implementing-pca-in-python-with-scikit-learn/
 import os
+import re
 from datetime import datetime
 
 import pandas as pd
@@ -9,15 +10,51 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
 
-def read_csv_data(file):
-    df = pd.read_csv(file)
-    df.head()
-    X, Y = preprocess_data(df)
-    return X, Y
+def reset_ind(X):
+    X.reset_index(inplace=True)
+    X = X.drop('index', axis=1)
+    return X
+
+
+def to_code(string):
+    code = "(" + string + ")"
+    code = re.sub("[a-zA-Z_]+", lambda m: "df['%s']" % m.group(0), code)
+    code = code.replace(",", ") & (")
+    code = code.replace(";", " | ")
+    code = code.replace("=", "==")
+    code = code.replace(">==", ">=")
+    code = code.replace("<==", "<=")
+    return code
 
 
 def save_csv_file(name, df):
     df.to_csv(os.getcwd() + name, index=False, header=True)
+
+
+def read_csv_data(file, conditions=None):
+    df = pd.read_csv(file)
+    df.head()
+    if conditions is not None:
+        print("In")
+        df = df.loc[to_code(conditions)]
+    X, Y = preprocess_data(df)
+    return X, Y
+
+
+def set_train_validationData(X, Y):
+    # Set Test and training data
+    X_train, X_val, Y_train, Y_val = train_test_split(X, Y, test_size=0.01, random_state=42)
+
+    # Remove previous index
+    X_train = reset_ind(X_train)
+    Y_train = reset_ind(Y_train)
+    X_val = reset_ind(X_val)
+    Y_val = reset_ind(Y_val)
+
+    save_csv_file('\data\\trainData.csv', pd.concat([X_train, Y_train], axis=1))
+    save_csv_file('\data\\validationData.csv', pd.concat([X_val, Y_val], axis=1))
+
+    return X_train, Y_train, X_val, Y_val
 
 
 def preprocess_data(df):
@@ -25,38 +62,18 @@ def preprocess_data(df):
     Y = df[['Test_nr', 'Faulty', 'HeatLoad', 'T_set', 'Cpr_Scale']]
     X = reset_ind(X)
     Y = reset_ind(Y)
+    # print("X")
+    # print(X.head())
+    # print("Y")
+    # print(Y.head())
     return X, Y
 
 
-def set_train_setData(df):
-    df = df.loc[(df['HeatLoad'] == 10000) & ((df['T_set'] == 0) | (df['T_set'] == 12))
-                & ((df['Cpr_Scale'] >= 0.9) | (df['Cpr_Scale'] == 0.3))]
-    # Preprocessing
-    X, Y = preprocess_data(df)
-    print("X")
-    print(X.head())
-    print("Y")
-    print(Y.head())
-
-    # Set Test and training data
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.01, random_state=42)
-
-    # Remove previous index
-    X_train = reset_ind(X_train)
-    Y_train = reset_ind(Y_train)
-    X_test = reset_ind(X_test)
-    Y_test = reset_ind(Y_test)
-
-    save_csv_file('\data\\trainData.csv', pd.concat([X_train, Y_train], axis=1))
-    save_csv_file('\data\\testData.csv', pd.concat([X_test, Y_test], axis=1))
-
-    return X_train, Y_train, X_test, Y_test
-
-
-def reductionPCA(X_train, Y_train, X_test, Y_test, accuracy):
+def reductionPCA(X_train, Y_train, X_validation, Y_validation, X_test, Y_test, accuracy):
     # STANDARDISE
     sc = StandardScaler()
     X_train = sc.fit_transform(X_train)
+    X_validation = sc.transform(X_validation)
     X_test = sc.transform(X_test)
 
     # Amount of PCs to keep
@@ -75,7 +92,7 @@ def reductionPCA(X_train, Y_train, X_test, Y_test, accuracy):
     plt.ylabel("Explained Variance Ratio")
     plt.xlabel("Principal Components")
     plt.show()
-    fig.savefig('results/PC(' + datetime.today().strftime("%d%m%Y_%H-%M.%S") + ').png')
+    # fig.savefig('results/PC(' + datetime.today().strftime("%d%m%Y_%H-%M.%S") + ').png')
 
     val = 0
     amount_pcs = 0
@@ -90,6 +107,7 @@ def reductionPCA(X_train, Y_train, X_test, Y_test, accuracy):
     # Applying PCA
     pca = PCA(n_components=amount_pcs)
     pc_x_train = pca.fit_transform(X_train)
+    pc_x_validation = pca.transform(X_validation)
     pc_x_test = pca.transform(X_test)
     ex_var = pca.explained_variance_ratio_
 
@@ -99,19 +117,23 @@ def reductionPCA(X_train, Y_train, X_test, Y_test, accuracy):
     pc_x_train = pd.DataFrame(data=pc_x_train, columns=columns)
     pca_train = pd.concat([pc_x_train, Y_train], axis=1)
 
+    pc_x_validation = pd.DataFrame(data=pc_x_validation, columns=columns)
+    pca_validation = pd.concat([pc_x_validation, Y_validation], axis=1)
+
     pc_x_test = pd.DataFrame(data=pc_x_test, columns=columns)
     pca_test = pd.concat([pc_x_test, Y_test], axis=1)
 
     print("Final PCA X")
     print(pca_train)
 
-    # PLOTTING
-    fig, ax = plotting(pca_train)
-    ax.set_title('3 component PCA', fontsize=20)
-    fig.show()
-    fig.savefig('results/3d(' + datetime.today().strftime("%d%m%Y_%H-%M.%S") + ').png')
+    # # PLOTTING
+    # fig, ax = plotting(pca_train)
+    # ax.set_title('3 component PCA', fontsize=20)
+    # ax.legend(['Not Faulty', 'Faulty'])
+    # fig.show()
+    # fig.savefig('results/3d(' + datetime.today().strftime("%d%m%Y_%H-%M.%S") + ').png')
 
-    return pca_train, pca_test, explained_variance, amount_pcs
+    return pca_train, pca_test, pca_validation, explained_variance, amount_pcs
 
 
 def plotting(pca_train):
@@ -131,12 +153,5 @@ def plotting(pca_train):
                      pca_train.loc[indicesToKeep, 'PC3'],
                      c=color,
                      marker=m)
-    ax.legend(['Not Faulty', 'Faulty'])
     ax.grid()
     return fig, ax
-
-
-def reset_ind(X):
-    X.reset_index(inplace=True)
-    X = X.drop('index', axis=1)
-    return X
