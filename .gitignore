@@ -1,10 +1,10 @@
 # Created by .ignore support plugin (hsz.mobi)
 ### Python template
-
+#data
 */allData.csv
 */trainData.csv
-*/testData.csv
-CompressorData/
+*/validationData.csv
+*CompressorData/
 results/
 
 # Matlab
@@ -84,7 +84,7 @@ target/
 # pyenv
 .python-version
 
-# celery beat schedule file
+# celery beat schedule file_all
 celerybeat-schedule
 
 # dotenv

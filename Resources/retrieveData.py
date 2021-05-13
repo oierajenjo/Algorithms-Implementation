@@ -1,8 +1,12 @@
 import requests
 
 
-def download_file_from_google_drive(id, destination):
-    URL = "https://drive.google.com/u/1/uc?id=16Zjvc0iqcWAznTCIceG_i3CBoGMuJfYt&export=download"
+def download_file_from_google_drive(id):
+    destination = 'data/'+id
+    if id == 'allNoisyData.csv':
+        URL = "https://drive.google.com/file/d/1BHe7DX0Jz8xbwNtRr5B_wlzcDCXnCW62/view?usp=sharing"
+    else:
+        URL = "https://drive.google.com/u/1/uc?id=16Zjvc0iqcWAznTCIceG_i3CBoGMuJfYt&export=download"
 
     session = requests.Session()
 
@@ -31,9 +35,3 @@ def save_response_content(response, destination):
         for chunk in response.iter_content(CHUNK_SIZE):
             if chunk:  # filter out keep-alive new chunks
                 f.write(chunk)
-
-
-if __name__ == "__main__":
-    file_id = 'allData.csv'
-    destination = 'data/'+file_id
-    download_file_from_google_drive(file_id, destination)
