@@ -40,10 +40,9 @@ def preprocess_data(df):
 
 def standardise(X_train, X_validation, X_test):
     sc = StandardScaler()
-    sc.fit(X_train)
-    X_train = sc.transform(X_train)
+    X_train = sc.fit_transform(X_train)
     X_validation = sc.transform(X_validation)
-    X_test = sc.transform(X_test)
+    X_test = sc.fit_transform(X_test)
     return X_train, X_validation, X_test
 
 

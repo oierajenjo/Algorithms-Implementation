@@ -62,7 +62,7 @@ X_train, X_validation, X_test = standardise(X_train, X_validation, X_test)
 PCA
 If don't want to implement PCA comment this part
 """
-accuracy = 0.995
+accuracy = 0.9995
 X_train, X_validation, X_test, explained_variance, amount_pcs = reductionPCA(X_train, X_validation, X_test, accuracy)
 
 
@@ -90,6 +90,8 @@ Instead of validation use test data
 If don't want to implement RBFN comment this part
 """
 # Accuracy per amount of centroid
+# centroids_max = int(len(pca_train.index)/10)
+centroids_max = 100
 step = 1
 scores, c_all = amount_centroids(pca_train, pca_validation, amount_pcs, centroids_max, step)
 
@@ -100,8 +102,8 @@ plt.xlabel('Amount of Centroids')
 plt.ylabel('Accuracy')
 plt.grid()
 plt.show()
-fig.savefig('results/Accuracy-Centroids(' + datetime.today().strftime("%d%m%Y_%H-%M.%S") + ').png')
-centroids_max = int(len(pca_train.index)/10)
+fig.savefig('results/Accuracy-Centroids('+str(c_all[0])+'-'+str(c_all[-1])+').png')
+
 
 """
 RBFN
@@ -124,3 +126,4 @@ ax.set_title('3 component PCA Test', fontsize=20)
 ax.legend(['Non Faulty', 'Faulty'])
 fig.show()
 fig.savefig('results/3d(' + datetime.today().strftime("%d%m%Y_%H-%M.%S") + ').png')
+plot_centroids(pca_test, centroids)

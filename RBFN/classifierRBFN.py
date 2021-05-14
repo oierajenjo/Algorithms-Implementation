@@ -110,11 +110,8 @@ def amount_centroids(pca_train, pca_validation, amount_pcs, c_max, step=1):
         score = measure_accuracy(X_pca_validation, Y_pca_validation, centroids, sigma, W)
         scores.append(score)
         c_all.append(c)
-        # if len(scores) >= 5:
-        #     if scores[-5] == 100:
-        #         break
     df = pd.DataFrame({'centroids': c_all, 'scores': scores})
-    save_csv_file("/results/score_cent("+str(c_all[0])+"-"+str(c_all[-1])+".csv", df)
+    save_csv_file("/results/score_cent("+str(c_all[0])+"-"+str(c_all[-1])+").csv", df)
     return scores, c_all
 
 
