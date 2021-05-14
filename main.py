@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+from time import process_time
 
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -89,7 +90,6 @@ Instead of validation use test data
 If don't want to implement RBFN comment this part
 """
 # Accuracy per amount of centroid
-centroids_max = 20
 step = 1
 scores, c_all = amount_centroids(pca_train, pca_validation, amount_pcs, centroids_max, step)
 
@@ -101,6 +101,7 @@ plt.ylabel('Accuracy')
 plt.grid()
 plt.show()
 fig.savefig('results/Accuracy-Centroids(' + datetime.today().strftime("%d%m%Y_%H-%M.%S") + ').png')
+centroids_max = int(len(pca_train.index)/10)
 
 """
 RBFN
@@ -112,8 +113,11 @@ centroids, W, sigma = train_data(X_pca_train, Y_pca_train, n_centroids=centroids
 # Plotting centroids
 plot_centroids(pca_train, centroids)
 
+t1_start = process_time()
 X_pca_test, Y_pca_test = get_XY(pca_test, amount_pcs)
 score = measure_accuracy(X_pca_test, Y_pca_test, centroids, sigma, W)
+t1_stop = process_time()
+print("Testing time in seconds:", t1_stop-t1_start)
 
 fig, ax = plotting(pca_test)
 ax.set_title('3 component PCA Test', fontsize=20)

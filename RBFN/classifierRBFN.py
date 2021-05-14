@@ -114,7 +114,7 @@ def amount_centroids(pca_train, pca_validation, amount_pcs, c_max, step=1):
         #     if scores[-5] == 100:
         #         break
     df = pd.DataFrame({'centroids': c_all, 'scores': scores})
-    save_csv_file("/results/score_cent.csv", df)
+    save_csv_file("/results/score_cent("+str(c_all[0])+"-"+str(c_all[-1])+".csv", df)
     return scores, c_all
 
 
