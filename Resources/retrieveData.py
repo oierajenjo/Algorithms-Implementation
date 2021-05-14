@@ -4,7 +4,7 @@ import requests
 def download_file_from_google_drive(id):
     destination = 'data/'+id
     if id == 'allNoisyData.csv':
-        URL = "https://drive.google.com/file/d/1BHe7DX0Jz8xbwNtRr5B_wlzcDCXnCW62/view?usp=sharing"
+        URL = "https://drive.google.com/uc?id=1BHe7DX0Jz8xbwNtRr5B_wlzcDCXnCW62"
     else:
         URL = "https://drive.google.com/u/1/uc?id=16Zjvc0iqcWAznTCIceG_i3CBoGMuJfYt&export=download"
 
