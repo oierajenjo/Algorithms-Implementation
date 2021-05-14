@@ -1,7 +1,12 @@
 # https://www.hackerearth.com/blog/developers/radial-basis-function-network
+from datetime import datetime
+
 import numpy as np
+import pandas as pd
 from sklearn.cluster import KMeans
 from sklearn.metrics import accuracy_score
+
+from PCA.reductionPCA import plotting, save_csv_file
 
 
 def get_XY(pca, amount_pcs):
@@ -13,9 +18,9 @@ def get_XY(pca, amount_pcs):
     return X, Y
 
 
-def train_data(X_train, Y_train, k_centroids=8):
+def train_data(X_train, Y_train, n_centroids=8):
     # Get centroids for RBF
-    centroids = get_centroids(X_train, k_cent=k_centroids)
+    centroids = get_centroids(X_train, n_cent=n_centroids)
 
     # Standard deviation
     sigma = get_sigma(centroids)
@@ -33,9 +38,9 @@ def train_data(X_train, Y_train, k_centroids=8):
     return centroids, W, sigma
 
 
-def get_centroids(X, k_cent):
+def get_centroids(X, n_cent):
     # KMeans algorithm
-    km = KMeans(n_clusters=k_cent).fit(X)
+    km = KMeans(n_clusters=n_cent).fit(X)
 
     cent = np.array(km.cluster_centers_)
     # print("Centroids")
@@ -64,8 +69,8 @@ def get_H_matrix(X, cent, sigma):
     for p in range(rows):
         for m in range(columns):
             dist = np.linalg.norm(X[p] - cent[m])
-            H[p][m] = np.exp(-(dist.T * dist) / np.power(2 * sigma, 2))  # CHECK THIS SIGMA
-            # H[p][m] = np.exp(-np.pow(dist, 2) / np.pow(2 * sigma, 2))
+            H[p][m] = np.exp(-(dist.T * dist) / np.power(sigma, 2))
+            # H[p][m] = np.exp(-np.power(dist, 2) / np.power(2 * sigma, 2))
     return H
 
 
@@ -89,29 +94,30 @@ def measure_accuracy(X, Y, centroids, sigma, W):
     return score
 
 
-def amount_centroids(pca_train, pca_validation, amount_pcs, k_max):
+def amount_centroids(pca_train, pca_validation, amount_pcs, c_max, step=1):
     X_pca_train, Y_pca_train = get_XY(pca_train, amount_pcs)
     X_pca_validation, Y_pca_validation = get_XY(pca_validation, amount_pcs)
 
     scores = []
-    k_all = []
-    for k in range(2, k_max + 1):
-        print("Centroids: " + str(k))
-        centroids, W, sigma = train_data(X_pca_train, Y_pca_train, k_centroids=k)
+    c_all = []
+    for c in range(2, c_max + 1, step):
+        print("Centroids: " + str(c))
+        centroids, W, sigma = train_data(X_pca_train, Y_pca_train, n_centroids=c)
 
-        # # Plotting centroids
-        # fig, ax = plotting(pca_train)
-        # ax.set_title('Centroids', fontsize=20)
-        # ax.scatter3D(centroids[:, 0], centroids[:, 1], centroids[:, 2], marker="x", color='k')
-        # ax.legend(['Not Faulty', 'Faulty', 'Centroids'])
-        # fig.show()
-        # fig.savefig('results/Centroids(' + datetime.today().strftime("%d%m%Y_%H-%M.%S") + ').png')
+        # Plotting centroids
+        fig, ax = plotting(pca_train)
+        ax.set_title('Centroids', fontsize=20)
+        ax.scatter3D(centroids[:, 0], centroids[:, 1], centroids[:, 2], marker="x", color='k')
+        ax.legend(['Not Faulty', 'Faulty', 'Centroids'])
+        fig.show()
+        fig.savefig('results/' + str(c) + 'Centroids.png')
 
         score = measure_accuracy(X_pca_validation, Y_pca_validation, centroids, sigma, W)
         scores.append(score)
-        k_all.append(k)
+        c_all.append(c)
         # if len(scores) >= 5:
         #     if scores[-5] == 100:
         #         break
-
-    return scores, k_all
+    df = pd.DataFrame({'centroids': c_all, 'scores': scores})
+    save_csv_file("/results/score_cent.csv", df)
+    return scores, c_all
