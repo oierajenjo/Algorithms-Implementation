@@ -6,7 +6,7 @@ from matplotlib import pyplot as plt
 
 from PCA.reductionPCA import reductionPCA, set_train_validationData, read_csv_data, preprocess_data, plotting, \
     standardise, pca_df
-from RBFN.classifierRBFN import train_data, measure_accuracy, get_XY, amount_centroids
+from RBFN.classifierRBFN import train_data, measure_accuracy, get_XY, amount_centroids, plot_centroids
 from Resources.retrieveData import download_file_from_google_drive
 
 file_all = os.getcwd() + '/data/allData.csv'
@@ -108,6 +108,10 @@ Accuracy with noisy data
 """
 X_pca_train, Y_pca_train = get_XY(pca_train, amount_pcs)
 centroids, W, sigma = train_data(X_pca_train, Y_pca_train, n_centroids=centroids_max)
+
+# Plotting centroids
+plot_centroids(pca_train, centroids)
+
 X_pca_test, Y_pca_test = get_XY(pca_test, amount_pcs)
 score = measure_accuracy(X_pca_test, Y_pca_test, centroids, sigma, W)
 
