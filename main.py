@@ -107,7 +107,7 @@ RBFN
 Accuracy with noisy data
 """
 X_pca_train, Y_pca_train = get_XY(pca_train, amount_pcs)
-centroids, W, sigma = train_data(X_pca_train, Y_pca_train, n_centroids=c_all[-1])
+centroids, W, sigma = train_data(X_pca_train, Y_pca_train, n_centroids=centroids_max)
 X_pca_test, Y_pca_test = get_XY(pca_test, amount_pcs)
 score = measure_accuracy(X_pca_test, Y_pca_test, centroids, sigma, W)
 
