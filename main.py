@@ -4,7 +4,6 @@ from os import path
 
 import pandas as pd
 from matplotlib import pyplot as plt
-
 from PCA.reductionPCA import reductionPCA, set_train_validationData, read_csv_data, preprocess_data, plotting
 from RBFN.classifierRBFN import train_data, measure_accuracy, get_XY, amount_centroids
 from Resources.retrieveData import download_file_from_google_drive
@@ -39,14 +38,15 @@ else:
 X_test, Y_test = read_csv_data(file_test)
 
 # PCA
-accuracy = 0.9995
+accuracy = 0.995
 pca_train, pca_test, pca_validation, explained_variance, amount_pcs = reductionPCA(X_train, Y_train, X_validation
                                                                                    , Y_validation, X_test, Y_test
                                                                                    , accuracy)
 # RBFN
 # Training
-k_max = 6000
-# scores, ks = amount_centroids(pca_train, pca_validation, amount_pcs, k_max)
+k_max = 300
+# step = 10
+# scores, ks = amount_centroids(pca_train, pca_validation, amount_pcs, k_max, step)
 
 # # Plotting accuracy per Amount of Centroids
 # plt.plot(ks, scores)
@@ -56,7 +56,7 @@ k_max = 6000
 # plt.grid()
 # plt.show()
 
-# # Test
+# Test
 X_pca_train, Y_pca_train = get_XY(pca_train, amount_pcs)
 X_pca_validation, Y_pca_validation = get_XY(pca_validation, amount_pcs)
 centroids, W, sigma = train_data(X_pca_train, Y_pca_train, k_centroids=k_max)

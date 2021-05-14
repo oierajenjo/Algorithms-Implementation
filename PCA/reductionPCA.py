@@ -109,10 +109,10 @@ def reductionPCA(X_train, Y_train, X_validation, Y_validation, X_test, Y_test, a
     pc_x_train = pca.fit_transform(X_train)
     pc_x_validation = pca.transform(X_validation)
     pc_x_test = pca.transform(X_test)
-    ex_var = pca.explained_variance_ratio_
+    # ex_var = pca.explained_variance_ratio_
 
     # PC DataFrame
-    columns = ['PC' + str(i) for i in range(1, len(ex_var) + 1)]
+    columns = ['PC' + str(i) for i in range(1, amount_pcs + 1)]
 
     pc_x_train = pd.DataFrame(data=pc_x_train, columns=columns)
     pca_train = pd.concat([pc_x_train, Y_train], axis=1)
