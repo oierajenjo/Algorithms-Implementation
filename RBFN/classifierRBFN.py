@@ -93,18 +93,18 @@ def measure_accuracy(X, Y, centroids, sigma, W):
     return score
 
 
-def amount_centroids(pca_train, pca_validation, amount_pcs, c_max, step=1):
+def amount_centroids(pca_train, pca_validation, amount_pcs, c_max, step=1, init_centroid=2):
     X_pca_train, Y_pca_train = get_XY(pca_train, amount_pcs)
     X_pca_validation, Y_pca_validation = get_XY(pca_validation, amount_pcs)
 
     scores = []
     c_all = []
-    for c in range(2, c_max + 1, step):
+    for c in range(init_centroid, c_max + 1, step):
         print("Centroids: " + str(c))
         centroids, W, sigma = train_data(X_pca_train, Y_pca_train, n_centroids=c)
 
         # Plotting centroids
-        plot_centroids(pca_train, centroids)
+        plot_centroids(pca_train, centroids, 'results/' + str(len(centroids)) + 'Centroids.png')
 
         score = measure_accuracy(X_pca_validation, Y_pca_validation, centroids, sigma, W)
         scores.append(score)
@@ -114,10 +114,10 @@ def amount_centroids(pca_train, pca_validation, amount_pcs, c_max, step=1):
     return scores, c_all
 
 
-def plot_centroids(pca, centroids):
+def plot_centroids(pca, centroids, name):
     fig, ax = plotting(pca)
     ax.set_title('Centroids', fontsize=20)
     ax.scatter3D(centroids[:, 0], centroids[:, 1], centroids[:, 2], marker="x", color='k')
     ax.legend(['Not Faulty', 'Faulty', 'Centroids'])
     fig.show()
-    fig.savefig('results/' + str(len(centroids)) + 'Centroids.png')
+    fig.savefig(name)
