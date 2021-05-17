@@ -5,7 +5,8 @@ data
 #*/trainData.csv
 #*/validationData.csv
 #*CompressorData/
-results/
+results/*.png
+results/*.csv
 
 # Matlab
 *.asv
