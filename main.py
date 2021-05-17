@@ -101,9 +101,8 @@ If don't want to implement RBFN comment this part
 # Accuracy per amount of centroid
 centroids_max = 100
 step = 1
-init_centroid = 2
-scores, c_all = amount_centroids(pca_train, pca_validation, amount_pcs, centroids_max, step=step
-                                 , init_centroid=init_centroid)
+init_cent = 2
+scores, c_all = amount_centroids(pca_train, pca_validation, amount_pcs, centroids_max, step=step)
 
 # Plotting accuracy per Amount of Centroids
 plt.plot(c_all, scores)
@@ -112,7 +111,7 @@ plt.xlabel('Amount of Centroids')
 plt.ylabel('Accuracy')
 plt.grid()
 plt.show()
-fig.savefig('results/Accuracy-Centroids(' + str(c_all.head(1).values) + '-' + str(c_all.tail(1).values) + ').png')
+fig.savefig('results/Accuracy-Centroids(' + str(c_all[0]) + '-' + str(c_all[-1]) + ').png')
 
 """
 RBFN

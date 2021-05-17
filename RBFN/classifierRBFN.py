@@ -83,13 +83,13 @@ def measure_accuracy(X, Y, centroids, sigma, W):
     return score
 
 
-def amount_centroids(pca_train, pca_validation, amount_pcs, c_max, step=1, init_centroid=2):
+def amount_centroids(pca_train, pca_validation, amount_pcs, c_max, step=1, init_cent=2):
     X_pca_train, Y_pca_train = get_XY(pca_train, amount_pcs)
     X_pca_validation, Y_pca_validation = get_XY(pca_validation, amount_pcs)
 
     scores = []
     c_all = []
-    for c in range(init_centroid, c_max + 1, step):
+    for c in range(init_cent, c_max + 1, step):
         print("Centroids: " + str(c))
         centroids, W, sigma = train_data(X_pca_train, Y_pca_train, n_centroids=c)
 
