@@ -26,14 +26,9 @@ def train_data(X_train, Y_train, n_centroids=8):
 
     # Train the RBFN H matrix
     H_train = get_H_matrix(X_train, centroids, sigma)
-    # print("H_train")
-    # print(H_train)
 
     # Get the Weights
     W = get_weights(H_train, Y_train)
-    # print("W")
-    # print(W)
-
     return centroids, W, sigma
 
 
@@ -42,8 +37,6 @@ def get_centroids(X, n_cent):
     km = KMeans(n_clusters=n_cent).fit(X)
 
     cent = np.array(km.cluster_centers_)
-    # print("Centroids")
-    # print(cent)
     return cent
 
 
@@ -87,9 +80,6 @@ def measure_accuracy(X, Y, centroids, sigma, W):
     prediction = np.dot(H, W)
     prediction = 0.5 * (np.sign(prediction - 0.5) + 1)
     score = accuracy_score(prediction, Y) * 100
-    # print("Prediction")
-    # print(prediction)
-    print("Accuracy: " + str(score) + "%")
     return score
 
 
@@ -107,6 +97,7 @@ def amount_centroids(pca_train, pca_validation, amount_pcs, c_max, step=1, init_
         plot_centroids(pca_train, centroids, 'results/' + str(len(centroids)) + 'Centroids.png')
 
         score = measure_accuracy(X_pca_validation, Y_pca_validation, centroids, sigma, W)
+        print("Accuracy: " + str(score) + "%")
         scores.append(score)
         c_all.append(c)
     df = pd.DataFrame({'centroids': c_all, 'scores': scores})

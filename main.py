@@ -33,6 +33,7 @@ if not os.path.exists(root + file_noisy):
 
 if not os.path.exists(root + file_val) or not os.path.exists(root + file_train) \
         or not os.path.exists(root + file_test):
+
     # Importing Datasets and group them
     df = get_df(root + file_all)
     print("Number of non-noisy samples: " + str(len(df.index)))
@@ -115,29 +116,35 @@ fig.savefig('results/Accuracy-Centroids(' + str(c_all.head(1).values) + '-' + st
 
 """
 RBFN
-Accuracy with noisy data
+Accuracy with Test data
 """
-dfs = pd.read_csv(root + '/results/score_cent(2-100).csv')
-dfs.head()
-c_all = dfs['centroids'].tolist()
-scores = dfs['scores'].tolist()
+# dfs = pd.read_csv(root + '/results/score_cent(2-100).csv')
+# dfs.head()
+# c_all = dfs['centroids'].tolist()
+# scores = dfs['scores'].tolist()
+
+# Train
 X_pca_train, Y_pca_train = get_XY(pca_train, amount_pcs)
 n_cent = c_all[scores.index(max(scores))]
 centroids, W, sigma = train_data(X_pca_train, Y_pca_train, n_centroids=n_cent)
 
-# Plotting centroids
-plot_centroids(pca_train, centroids, 'results/' + str(n_cent) + 'CentroidsTrain-Optimal.png')
 
+# Test
 t1_start = process_time()
 X_pca_test, Y_pca_test = get_XY(pca_test, amount_pcs)
 score = measure_accuracy(X_pca_test, Y_pca_test, centroids, sigma, W)
 t1_stop = process_time()
-print("Testing time in seconds:", t1_stop - t1_start)
+print("Testing time in seconds:" + str(t1_stop - t1_start) + "s")
 print("Score: " + str(score) + "%")
 
+
+# Plots
 fig, ax = plotting(pca_test)
 ax.set_title('3 component PCA Test', fontsize=20)
 ax.legend(['Non Faulty', 'Faulty'])
 fig.show()
 fig.savefig('results/3d(' + datetime.today().strftime("%d%m%Y_%H-%M.%S") + ').png')
+
+# Plotting centroids
+plot_centroids(pca_train, centroids, 'results/' + str(n_cent) + 'CentroidsTrain-Optimal.png')
 plot_centroids(pca_test, centroids, 'results/' + str(n_cent) + 'CentroidsTest-Optimal.png')

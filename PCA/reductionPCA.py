@@ -12,7 +12,6 @@ def standardise(X):
 
 
 def reductionPCA(X, accuracy):
-    # Amount of PCs to keep
     # Applying PCA
     pca = PCA()
     pca.fit_transform(X)
@@ -30,6 +29,7 @@ def reductionPCA(X, accuracy):
     plt.show()
     fig.savefig('results/PCs(' + datetime.today().strftime("%d%m%Y_%H-%M.%S") + ').png')
 
+    # Amount of PCs to keep
     val = 0
     amount_pcs = 0
     for ev in explained_variance:
@@ -51,7 +51,6 @@ def reductionPCA(X, accuracy):
 def plotting(pca):
     fig = plt.figure(figsize=(8, 8))
     ax = plt.axes(projection='3d')
-    # ax = fig.add_subplot(1, 1, 1)
     ax.set_xlabel('Principal Component 1', fontsize=15)
     ax.set_ylabel('Principal Component 2', fontsize=15)
     ax.set_zlabel('Principal Component 3', fontsize=15)

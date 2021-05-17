@@ -17,10 +17,6 @@ def preprocess_data(df):
     Y = df[['Test_nr', 'Faulty', 'HeatLoad', 'T_set', 'Cpr_Scale']]
     X = reset_ind(X)
     Y = reset_ind(Y)
-    # print("X")
-    # print(X.head())
-    # print("Y")
-    # print(Y.head())
     return X, Y
 
 
@@ -43,12 +39,9 @@ def set_train_validation_testData(pc_X, Y_all, amount_pcs):
     return X_all, X_train, Y_train, X_val, Y_val, X_test, Y_test
 
 
-def read_csv_data(file, conditions=None):
+def read_csv_data(file):
     df = pd.read_csv(file)
     df.head()
-    # if conditions is not None:
-    #     print("In")
-    #     df = df.loc[to_code(conditions)]
     X, Y = preprocess_data(df)
     return X, Y
 
@@ -58,16 +51,6 @@ def pca_df(pc_x, Y):
     pca = pd.concat([pc_x, Y], axis=1)
     return pca
 
-
-# def to_code(string):
-#     code = "(" + string + ")"
-#     code = re.sub("[a-zA-Z_]+", lambda m: "df['%s']" % m.group(0), code)
-#     code = code.replace(",", ") & (")
-#     code = code.replace(";", " | ")
-#     code = code.replace("=", "==")
-#     code = code.replace(">==", ">=")
-#     code = code.replace("<==", "<=")
-#     return code
 
 def reset_ind(X):
     X.reset_index(inplace=True)
