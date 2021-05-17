@@ -1,12 +1,11 @@
 # https://www.hackerearth.com/blog/developers/radial-basis-function-network
-from datetime import datetime
-
 import numpy as np
 import pandas as pd
 from sklearn.cluster import KMeans
 from sklearn.metrics import accuracy_score
 
-from PCA.reductionPCA import plotting, save_csv_file
+from PCA.reductionPCA import plotting
+from Resources.functions import save_csv_file
 
 
 def get_XY(pca, amount_pcs):
