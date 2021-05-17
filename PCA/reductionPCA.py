@@ -7,8 +7,8 @@ from sklearn.preprocessing import StandardScaler
 
 def standardise(X):
     sc = StandardScaler()
-    X = sc.fit_transform(X)
-    return X
+    s_X = sc.fit_transform(X)
+    return s_X
 
 
 def reductionPCA(X, accuracy):
