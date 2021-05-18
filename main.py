@@ -2,11 +2,13 @@ import json
 import os
 from time import process_time
 
+import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
+from sklearn.metrics import accuracy_score
 
 from PCA.reductionPCA import reductionPCA, plotting, standardise
-from RBFN.classifierRBFN import train_data, measure_accuracy, get_XY, amount_centroids, plot_centroids
+from RBFN.classifierRBFN import train_data, make_prediction, get_XY, amount_centroids, plot_centroids
 from Resources.functions import get_df, preprocess_data, read_csv_data, set_train_validation_testData, pca_df, \
     save_csv_file, create_folders
 from Resources.retrieveData import download_file_from_google_drive
@@ -159,20 +161,29 @@ except IOError:
         json.dump(data, f)
 
 # Test
-t1_start = process_time()
+# All together
 X_pca_test, Y_pca_test = get_XY(pca_test, amount_pcs)
-score = measure_accuracy(X_pca_test, Y_pca_test, centroids, sigma, W)
+t1_start = process_time()
+prediction = make_prediction(X_pca_test, centroids, sigma, W)
+score = accuracy_score(prediction, Y_pca_test) * 100
 t1_stop = process_time()
-print("Testing time in seconds:" + str(t1_stop - t1_start) + "s")
+print("Testing time in seconds: ", t1_stop - t1_start)
 print("Score: " + str(score) + "%")
 
+# One sample at a time
+times = []
+test_scores = []
+for i in range(len(pca_test.index)):
+    X_pca_test, Y_pca_test = get_XY(pca_test.loc[pca_test.index == i], amount_pcs)
+    t1_start = process_time()
+    prediction = make_prediction(X_pca_test, centroids, sigma, W)
+    score = int(prediction == Y_pca_test) * 100
+    t1_stop = process_time()
+    times.append(t1_stop - t1_start)
+    test_scores.append(score)
 
-# Plots
-fig, ax = plotting(pca_test)
-ax.set_title('3 component PCA Test', fontsize=20)
-ax.legend(['Non Faulty', 'Faulty'])
-fig.show()
-fig.savefig('results/3d(' + datetime.today().strftime("%d%m%Y_%H-%M.%S") + ').png')
+print("Mean testing time in seconds: ", np.mean(times))
+print("Score: " + str(np.mean(test_scores)) + "%")
 
 # Plotting centroids
 fig = plot_centroids(pca_train, centroids, 'results/centroids/' + str(n_cent) + 'CentroidsTrain-Optimal.png')

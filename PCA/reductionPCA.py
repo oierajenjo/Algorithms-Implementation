@@ -1,5 +1,4 @@
 # https://stackabuse.com/implementing-pca-in-python-with-scikit-learn/
-from datetime import datetime
 from matplotlib import pyplot as plt
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
@@ -27,7 +26,7 @@ def reductionPCA(X, accuracy):
     plt.ylabel("Explained Variance Ratio")
     plt.xlabel("Principal Components")
     plt.show()
-    fig.savefig('results/PCs(' + datetime.today().strftime("%d%m%Y_%H-%M.%S") + ').png')
+    fig.savefig('results/PCs(' + str(accuracy) + ').png')
 
     # Amount of PCs to keep
     val = 0

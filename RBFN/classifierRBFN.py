@@ -72,13 +72,13 @@ def get_weights(H, Y):
     return W
 
 
-def measure_accuracy(X, Y, centroids, sigma, W):
+def make_prediction(X, centroids, sigma, W):
     H = get_H_matrix(X, centroids, sigma)
 
     prediction = np.dot(H, W)
     prediction = 0.5 * (np.sign(prediction - 0.5) + 1)
-    score = accuracy_score(prediction, Y) * 100
-    return score
+
+    return prediction
 
 
 def amount_centroids(pca_train, pca_validation, amount_pcs, c_max, step=1, init_cent=2):
@@ -94,7 +94,8 @@ def amount_centroids(pca_train, pca_validation, amount_pcs, c_max, step=1, init_
         # Plotting centroids
         fig = plot_centroids(pca_train, centroids, 'results/centroids/' + str(len(centroids)) + 'Centroids.png')
 
-        score = measure_accuracy(X_pca_validation, Y_pca_validation, centroids, sigma, W)
+        prediction = make_prediction(X_pca_validation, centroids, sigma, W)
+        score = accuracy_score(prediction, Y_pca_validation) * 100
         print("Accuracy: " + str(score) + "%")
         scores.append(score)
         c_all.append(c)
