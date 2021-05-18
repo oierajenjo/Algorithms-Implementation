@@ -123,7 +123,7 @@ except IOError:
     plt.ylabel('Accuracy [%]')
     plt.grid()
     plt.show()
-    fig.savefig('results/centroids/Accuracy-Centroids(' + str(init_cent) + "-" + str(cent_max) + "-" +
+    fig.savefig('results/Accuracy-Centroids(' + str(init_cent) + "-" + str(cent_max) + "-" +
                 str(accuracy) + ').png')
     data = {'amountCentroids': c_all, 'accuracy': scores}
     with open(json_file, "w") as f:
@@ -174,11 +174,11 @@ for i in range(len(pca_test.index)):
     times.append(t1_stop - t1_start)
     test_scores.append(score)
 
-print("Mean testing time in seconds: ", np.mean(times))
-print("Accuracy: " + str(np.mean(test_scores)) + "%")
+print("Mean testing time in seconds per sample: ", np.mean(times))
+print("Mean accuracy: " + str(np.mean(test_scores)) + "%")
 
 # Plotting centroids
-fig = plot_centroids(pca_train, centroids, 'results/centroids/' + str(n_cent) + 'CentroidsTrain-Optimal.png')
+fig = plot_centroids(pca_train, centroids, 'results/' + str(n_cent) + 'CentroidsTrain-Optimal.png')
 fig.show()
-fig = plot_centroids(pca_test, centroids, 'results/centroids/' + str(n_cent) + 'CentroidsTest-Optimal.png')
+fig = plot_centroids(pca_test, centroids, 'results/' + str(n_cent) + 'CentroidsTest-Optimal.png')
 fig.show()
