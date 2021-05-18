@@ -5,7 +5,7 @@ clc
 curDir = pwd;
 parDir = strfind(curDir,filesep);
 parDir = curDir(1:parDir(end)-1);
-base = [parDir '\data\NoisyCompressorData'];
+base = [parDir '\data\NoisyCompressorData*'];
 list = dir(fullfile(base, '**', '*.mat'));
 
 numTests = numel(list);
@@ -90,5 +90,5 @@ end_data(1,1:18) = ["Test_nr","T_0","T_c","T_sh","V_exp","T_sup",...
 end_data(2:n,1:18) = data;
 
 %% Write CSV file
-save = [parDir '\data\allNoisyData.csv'];
+save = [parDir '\data\allNoisyData2.csv'];
 writematrix(end_data,save)

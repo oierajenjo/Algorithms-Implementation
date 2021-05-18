@@ -15,11 +15,15 @@ accuracy = 0.995  # Accuracy for the PCA
 
 root = os.getcwd()
 file_all = '/data/allData.csv'
-file_noisy = '/data/allNoisyData.csv'
+file_noisy = '/data/allNoisyData.csv'  # One noisy tests
+file_noisy2 = '/data/allNoisyData2.csv'  # Two noisy tests
 file_merged = '/data/mergedData(' + str(accuracy) + ').csv'
 file_train = '/data/trainData(' + str(accuracy) + ').csv'
 file_val = '/data/validationData(' + str(accuracy) + ').csv'
 file_test = '/data/testData(' + str(accuracy) + ').csv'
+
+# The noisy data file to be used
+file_used = file_noisy2
 
 """
 CHECK IF FILES EXIST
@@ -31,6 +35,9 @@ if not os.path.exists(root + file_all):
 if not os.path.exists(root + file_noisy):
     download_file_from_google_drive('allNoisyData.csv')
 
+if not os.path.exists(root + file_noisy2):
+    download_file_from_google_drive('allNoisyData2.csv')
+
 # Generate folders
 create_folders()
 
@@ -40,7 +47,7 @@ if not os.path.exists(root + file_val) or not os.path.exists(root + file_train) 
     # Importing Datasets and group them
     df = get_df(root + file_all)
     print("Number of non-noisy samples: " + str(len(df.index)))
-    dfn = get_df(root + file_noisy)
+    dfn = get_df(root + file_used)
     print("Number of noisy samples: " + str(len(dfn.index)))
     df_all = pd.concat([df, dfn], ignore_index=True)
 
