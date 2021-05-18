@@ -3,6 +3,19 @@ import os
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
+from Resources.retrieveData import download_file_from_google_drive
+
+
+def retrieve_files(root, file_all, file_noisy, file_noisy2):
+    if not os.path.exists(root + file_all):
+        download_file_from_google_drive('allData.csv')
+
+    if not os.path.exists(root + file_noisy):
+        download_file_from_google_drive('allNoisyData.csv')
+
+    if not os.path.exists(root + file_noisy2):
+        download_file_from_google_drive('allNoisyData2.csv')
+
 
 def create_folders():
     try:

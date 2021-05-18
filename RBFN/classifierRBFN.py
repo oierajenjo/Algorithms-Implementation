@@ -1,5 +1,6 @@
 # https://www.hackerearth.com/blog/developers/radial-basis-function-network
 import numpy as np
+from matplotlib import pyplot as plt
 from sklearn.cluster import KMeans
 from sklearn.metrics import accuracy_score
 
@@ -77,7 +78,6 @@ def make_prediction(X, centroids, sigma, W):
 
     prediction = np.dot(H, W)
     prediction = 0.5 * (np.sign(prediction - 0.5) + 1)
-
     return prediction
 
 
@@ -93,7 +93,7 @@ def amount_centroids(pca_train, pca_validation, amount_pcs, c_max, step=1, init_
 
         # Plotting centroids
         fig = plot_centroids(pca_train, centroids, 'results/centroids/' + str(len(centroids)) + 'Centroids.png')
-
+        plt.close(fig)
         prediction = make_prediction(X_pca_validation, centroids, sigma, W)
         score = accuracy_score(prediction, Y_pca_validation) * 100
         print("Accuracy: " + str(score) + "%")

@@ -1,17 +1,13 @@
 import json
-import os
 from time import process_time
 
 import numpy as np
-import pandas as pd
 from matplotlib import pyplot as plt
 from sklearn.metrics import accuracy_score
 
 from PCA.reductionPCA import reductionPCA, plotting, standardise
 from RBFN.classifierRBFN import train_data, make_prediction, get_XY, amount_centroids, plot_centroids
-from Resources.functions import get_df, preprocess_data, read_csv_data, set_train_validation_testData, pca_df, \
-    save_csv_file, create_folders
-from Resources.retrieveData import download_file_from_google_drive
+from Resources.functions import *
 
 accuracy = 0.995  # Accuracy for the PCA
 
@@ -31,14 +27,8 @@ file_used = file_noisy2
 CHECK IF FILES EXIST
 If not execute download_file_from_google_drive
 """
-if not os.path.exists(root + file_all):
-    download_file_from_google_drive('allData.csv')
-
-if not os.path.exists(root + file_noisy):
-    download_file_from_google_drive('allNoisyData.csv')
-
-if not os.path.exists(root + file_noisy2):
-    download_file_from_google_drive('allNoisyData2.csv')
+# Retrieve Files
+retrieve_files(root, file_all, file_noisy, file_noisy2)
 
 # Generate folders
 create_folders()
@@ -103,7 +93,7 @@ fig, ax = plotting(pca_all)
 ax.set_title('3 component PCA All', fontsize=20)
 ax.legend(['Non Faulty', 'Faulty'])
 fig.show()
-fig.savefig('results/3D/3d-PCA_All' + str(accuracy) + ').png')
+fig.savefig('results/3D/3d-PCA_All(' + str(accuracy) + ').png')
 
 """
 RBFN
@@ -115,28 +105,30 @@ cent_max = 100
 step = 1
 init_cent = 2
 
-json_file = "/results/score_cent(" + str(init_cent) + "-" + str(cent_max) + "-" + str(accuracy) + ").json"
+json_file = root + "/results/score_cent(" + str(init_cent) + "-" + str(cent_max) + "-" + str(accuracy) + ").json"
 try:
     with open(json_file, 'r') as f:
         data = json.load(f)
         c_all = data['centroids'].tolist()
-        scores = data['scores'].tolist()
+        scores = data['accuracy'].tolist()
 except IOError:
     scores, c_all = amount_centroids(pca_train, pca_validation, amount_pcs, cent_max, step=step)
     # Plotting accuracy per Amount of Centroids
-    plt.plot(c_all, scores)
-    plt.title('Accuracy per Amount of Centroids')
-    plt.xlabel('Amount of Centroids')
-    plt.ylabel('Accuracy')
-    plt.grid()
-    plt.show()
+    fig, ax = plt.subplots()
+    ax.plot(c_all, scores)
     plt.xlim(init_cent, cent_max)
     plt.ylim(0, 100)
+    plt.title('Accuracy per Amount of Centroids')
+    plt.xlabel('Amount of Centroids')
+    plt.ylabel('Accuracy [%]')
+    plt.grid()
+    plt.show()
     fig.savefig('results/centroids/Accuracy-Centroids(' + str(init_cent) + "-" + str(cent_max) + "-" +
                 str(accuracy) + ').png')
-    data = {'amountCentroids': c_all.tolist(), 'scores': scores}
+    data = {'amountCentroids': c_all, 'accuracy': scores}
     with open(json_file, "w") as f:
         json.dump(data, f)
+
 
 """
 RBFN
@@ -168,7 +160,7 @@ prediction = make_prediction(X_pca_test, centroids, sigma, W)
 score = accuracy_score(prediction, Y_pca_test) * 100
 t1_stop = process_time()
 print("Testing time in seconds: ", t1_stop - t1_start)
-print("Score: " + str(score) + "%")
+print("Accuracy: " + str(score) + "%")
 
 # One sample at a time
 times = []
@@ -183,7 +175,7 @@ for i in range(len(pca_test.index)):
     test_scores.append(score)
 
 print("Mean testing time in seconds: ", np.mean(times))
-print("Score: " + str(np.mean(test_scores)) + "%")
+print("Accuracy: " + str(np.mean(test_scores)) + "%")
 
 # Plotting centroids
 fig = plot_centroids(pca_train, centroids, 'results/centroids/' + str(n_cent) + 'CentroidsTrain-Optimal.png')
