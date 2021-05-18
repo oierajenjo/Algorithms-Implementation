@@ -1,5 +1,5 @@
+import json
 import os
-from datetime import datetime
 from time import process_time
 
 import pandas as pd
@@ -94,7 +94,7 @@ fig, ax = plotting(pca_all)
 ax.set_title('3 component PCA All', fontsize=20)
 ax.legend(['Non Faulty', 'Faulty'])
 fig.show()
-fig.savefig('results/3d(' + datetime.today().strftime("%d%m%Y_%H-%M.%S") + ').png')
+fig.savefig('results/3D/3d-PCA_All' + str(accuracy) + ').png')
 
 """
 RBFN
@@ -102,34 +102,54 @@ Instead of validation use test data
 If don't want to implement RBFN comment this part
 """
 # Accuracy per amount of centroid
-centroids_max = 100
+cent_max = 100
 step = 1
 init_cent = 2
-scores, c_all = amount_centroids(pca_train, pca_validation, amount_pcs, centroids_max, step=step)
 
-# Plotting accuracy per Amount of Centroids
-plt.plot(c_all, scores)
-plt.title('Accuracy per Amount of Centroids')
-plt.xlabel('Amount of Centroids')
-plt.ylabel('Accuracy')
-plt.grid()
-plt.show()
-fig.savefig('results/Accuracy-Centroids(' + str(c_all[0]) + '-' + str(c_all[-1]) + ').png')
+json_file = "/results/score_cent(" + str(init_cent) + "-" + str(cent_max) + "-" + str(accuracy) + ").json"
+try:
+    with open(json_file, 'r') as f:
+        data = json.load(f)
+        c_all = data['centroids'].tolist()
+        scores = data['scores'].tolist()
+except IOError:
+    scores, c_all = amount_centroids(pca_train, pca_validation, amount_pcs, cent_max, step=step)
+    # Plotting accuracy per Amount of Centroids
+    plt.plot(c_all, scores)
+    plt.title('Accuracy per Amount of Centroids')
+    plt.xlabel('Amount of Centroids')
+    plt.ylabel('Accuracy')
+    plt.grid()
+    plt.show()
+    plt.xlim(init_cent, cent_max)
+    plt.ylim(0, 100)
+    fig.savefig('results/centroids/Accuracy-Centroids(' + str(init_cent) + "-" + str(cent_max) + "-" +
+                str(accuracy) + ').png')
+    data = {'amountCentroids': c_all.tolist(), 'scores': scores}
+    with open(json_file, "w") as f:
+        json.dump(data, f)
 
 """
 RBFN
 Accuracy with Test data
 """
-# dfs = pd.read_csv(root + '/results/score_cent(2-100).csv')
-# dfs.head()
-# c_all = dfs['centroids'].tolist()
-# scores = dfs['scores'].tolist()
-
 # Train
 X_pca_train, Y_pca_train = get_XY(pca_train, amount_pcs)
 n_cent = c_all[scores.index(max(scores))]
-centroids, W, sigma = train_data(X_pca_train, Y_pca_train, n_centroids=n_cent)
 
+# Save or retrieve centroids
+json_file = root + "/results/rbfn_data(" + str(n_cent) + "-" + str(accuracy) + ").json"
+try:
+    with open(json_file, 'r') as f:
+        data = json.load(f)
+        centroids = data['Centroids']
+        W = data['W']
+        sigma = data['sigma']
+except IOError:
+    centroids, W, sigma = train_data(X_pca_train, Y_pca_train, n_centroids=n_cent)
+    data = {'Centroids': centroids.tolist(), 'W': W.tolist(), 'sigma': sigma}
+    with open(json_file, "w") as f:
+        json.dump(data, f)
 
 # Test
 t1_start = process_time()
@@ -148,5 +168,7 @@ fig.show()
 fig.savefig('results/3d(' + datetime.today().strftime("%d%m%Y_%H-%M.%S") + ').png')
 
 # Plotting centroids
-plot_centroids(pca_train, centroids, 'results/' + str(n_cent) + 'CentroidsTrain-Optimal.png')
-plot_centroids(pca_test, centroids, 'results/' + str(n_cent) + 'CentroidsTest-Optimal.png')
+fig = plot_centroids(pca_train, centroids, 'results/centroids/' + str(n_cent) + 'CentroidsTrain-Optimal.png')
+fig.show()
+fig = plot_centroids(pca_test, centroids, 'results/centroids/' + str(n_cent) + 'CentroidsTest-Optimal.png')
+fig.show()
