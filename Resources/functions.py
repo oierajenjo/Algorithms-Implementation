@@ -1,6 +1,25 @@
+import errno
 import os
 import pandas as pd
 from sklearn.model_selection import train_test_split
+
+
+def create_folders():
+    try:
+        os.makedirs('results')
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    try:
+        os.makedirs('results/3D')
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    try:
+        os.makedirs('results/centroids')
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
 
 
 def get_df(file):

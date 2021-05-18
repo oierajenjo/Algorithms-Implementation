@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 from PCA.reductionPCA import reductionPCA, plotting, standardise
 from RBFN.classifierRBFN import train_data, measure_accuracy, get_XY, amount_centroids, plot_centroids
 from Resources.functions import get_df, preprocess_data, read_csv_data, set_train_validation_testData, pca_df, \
-    save_csv_file
+    save_csv_file, create_folders
 from Resources.retrieveData import download_file_from_google_drive
 
 accuracy = 0.995  # Accuracy for the PCA
@@ -30,6 +30,9 @@ if not os.path.exists(root + file_all):
 
 if not os.path.exists(root + file_noisy):
     download_file_from_google_drive('allNoisyData.csv')
+
+# Generate folders
+create_folders()
 
 if not os.path.exists(root + file_val) or not os.path.exists(root + file_train) \
         or not os.path.exists(root + file_test):
