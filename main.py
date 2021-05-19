@@ -50,22 +50,24 @@ if not os.path.exists(root + file_val) or not os.path.exists(root + file_train) 
     """
     STANDARDISATION
     Standardisation process were data is standardised to mean 0 and var 1
+    If don't want to implement standardisation comment this part
     """
-    s_X = standardise(X)
+    X = standardise(X)
 
     """
     PCA
     If don't want to implement PCA comment this part
     """
-    X, explained_variance, amount_pcs = reductionPCA(s_X, accuracy)
+    pc_X, explained_variance, amount_pcs = reductionPCA(X, accuracy)
+    columns = ['PC' + str(i) for i in range(1, amount_pcs + 1)]
+    X = pd.DataFrame(data=pc_X, columns=columns)
 
     """
     SEPARATE DATA
     Data samples are separated in train, validation and test data
     """
-    X_all, X_train, Y_train, X_val, Y_val, X_test, Y_test = set_train_validation_testData(X, Y, amount_pcs
-                                                                                          , test_val_size)
-    print("Total amount of samples: ", X_all.shape[0])
+    X_train, Y_train, X_val, Y_val, X_test, Y_test = set_train_validation_testData(X, Y, test_val_size)
+    print("Total amount of samples: ", X.shape[0])
     print("Amount of Train samples: ", X_train.shape[0])
     print("Amount of Validation samples: ", X_val.shape[0])
     print("Amount of Test samples: ", X_test.shape[0])
@@ -73,26 +75,26 @@ if not os.path.exists(root + file_val) or not os.path.exists(root + file_train) 
     save_csv_file(file_train, pd.concat([X_train, Y_train], axis=1))
     save_csv_file(file_val, pd.concat([X_val, Y_val], axis=1))
     save_csv_file(file_test, pd.concat([X_test, Y_test], axis=1))
-    save_csv_file(file_merged, pd.concat([X_all, Y], axis=1))
+    save_csv_file(file_merged, pd.concat([X, Y], axis=1))
 else:
-    X_all, Y = read_csv_data(root + file_merged)
+    X, Y = read_csv_data(root + file_merged)
     X_train, Y_train = read_csv_data(root + file_train)
     X_val, Y_val = read_csv_data(root + file_val)
     X_test, Y_test = read_csv_data(root + file_test)
 
 amount_pcs = len(X_train.columns)
-print("Amount of centroids:", amount_pcs)
+print("Amount of PCs:", amount_pcs)
 
 """
 PCA Matrix
 Generate 'PCA' matrix
 """
-pca_all = pca_df(X_all, Y)
+pca_all = pca_df(X, Y)
 pca_train = pca_df(X_train, Y_train)
 pca_validation = pca_df(X_val, Y_val)
 pca_test = pca_df(X_test, Y_test)
-print("Training  PCA")
-print(pca_train)
+# print("Training  PCA")
+# print(pca_train)
 
 # Plotting PCA training data
 fig, ax = plotting(pca_all)
@@ -104,7 +106,7 @@ fig.savefig('results/3D/3d-PCA_All(' + str(accuracy) + ').png')
 """
 RBFN
 Instead of validation use test data
-If don't want to implement RBFN comment this part
+If don't want to implement RBFN comment this part until end
 """
 # Accuracy per amount of centroid
 cent_max = 100

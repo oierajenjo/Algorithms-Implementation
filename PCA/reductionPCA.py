@@ -57,9 +57,9 @@ def plotting(pca):
     markers = ['*', '*']
     for target, color, m in zip(targets, colors, markers):
         indicesToKeep = pca['Faulty'] == target
-        ax.scatter3D(pca.loc[indicesToKeep, 'PC1'],
-                     pca.loc[indicesToKeep, 'PC2'],
-                     pca.loc[indicesToKeep, 'PC3'],
+        ax.scatter3D(pca.loc[indicesToKeep, pca.columns[0]],
+                     pca.loc[indicesToKeep, pca.columns[1]],
+                     pca.loc[indicesToKeep, pca.columns[2]],
                      c=color,
                      marker=m)
     ax.grid()

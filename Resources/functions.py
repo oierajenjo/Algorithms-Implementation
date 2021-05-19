@@ -52,10 +52,7 @@ def preprocess_data(df):
     return X, Y
 
 
-def set_train_validation_testData(pc_X, Y_all, amount_pcs, test_val_size):
-    columns = ['PC' + str(i) for i in range(1, amount_pcs + 1)]
-    X_all = pd.DataFrame(data=pc_X, columns=columns)
-
+def set_train_validation_testData(X_all, Y_all, test_val_size):
     # Set Test and training data
     X_train, X_val_test, Y_train, Y_val_test = train_test_split(X_all, Y_all, test_size=test_val_size, random_state=42)
     X_val, X_test, Y_val, Y_test = train_test_split(X_val_test, Y_val_test, test_size=0.5, random_state=42)
@@ -68,7 +65,7 @@ def set_train_validation_testData(pc_X, Y_all, amount_pcs, test_val_size):
     X_test = reset_ind(X_test)
     Y_test = reset_ind(Y_test)
 
-    return X_all, X_train, Y_train, X_val, Y_val, X_test, Y_test
+    return X_train, Y_train, X_val, Y_val, X_test, Y_test
 
 
 def read_csv_data(file):
