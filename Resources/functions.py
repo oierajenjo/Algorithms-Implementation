@@ -52,13 +52,13 @@ def preprocess_data(df):
     return X, Y
 
 
-def set_train_validation_testData(pc_X, Y_all, amount_pcs):
+def set_train_validation_testData(pc_X, Y_all, amount_pcs, test_val_size):
     columns = ['PC' + str(i) for i in range(1, amount_pcs + 1)]
     X_all = pd.DataFrame(data=pc_X, columns=columns)
 
     # Set Test and training data
-    X_train, X_val, Y_train, Y_val = train_test_split(X_all, Y_all, test_size=0.01, random_state=42)
-    X_train, X_test, Y_train, Y_test = train_test_split(X_train, Y_train, test_size=0.01, random_state=42)
+    X_train, X_val_test, Y_train, Y_val_test = train_test_split(X_all, Y_all, test_size=test_val_size, random_state=42)
+    X_val, X_test, Y_val, Y_test = train_test_split(X_val_test, Y_val_test, test_size=0.5, random_state=42)
 
     # Remove previous index
     X_train = reset_ind(X_train)

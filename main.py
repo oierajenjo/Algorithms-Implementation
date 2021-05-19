@@ -10,6 +10,7 @@ from RBFN.classifierRBFN import train_data, make_prediction, get_XY, amount_cent
 from Resources.functions import *
 
 accuracy = 0.995  # Accuracy for the PCA
+test_val_size = 0.02  # Percentage assigned to
 
 root = os.getcwd()
 file_all = '/data/allData.csv'
@@ -62,7 +63,12 @@ if not os.path.exists(root + file_val) or not os.path.exists(root + file_train) 
     SEPARATE DATA
     Data samples are separated in train, validation and test data
     """
-    X_all, X_train, Y_train, X_val, Y_val, X_test, Y_test = set_train_validation_testData(pc_X, Y, amount_pcs)
+    X_all, X_train, Y_train, X_val, Y_val, X_test, Y_test = set_train_validation_testData(pc_X, Y, amount_pcs
+                                                                                          , test_val_size)
+    print("Total amount of samples: ", X_all.shape[0])
+    print("Amount of Train samples: ", X_train.shape[0])
+    print("Amount of Validation samples: ", X_val.shape[0])
+    print("Amount of Test samples: ", X_test.shape[0])
 
     save_csv_file(file_train, pd.concat([X_train, Y_train], axis=1))
     save_csv_file(file_val, pd.concat([X_val, Y_val], axis=1))
@@ -109,8 +115,8 @@ json_file = root + "/results/score_cent(" + str(init_cent) + "-" + str(cent_max)
 try:
     with open(json_file, 'r') as f:
         data = json.load(f)
-        c_all = data['centroids'].tolist()
-        scores = data['accuracy'].tolist()
+        c_all = data['amountCentroids']
+        scores = data['accuracy']
 except IOError:
     scores, c_all = amount_centroids(pca_train, pca_validation, amount_pcs, cent_max, step=step)
     # Plotting accuracy per Amount of Centroids
@@ -129,7 +135,6 @@ except IOError:
     with open(json_file, "w") as f:
         json.dump(data, f)
 
-
 """
 RBFN
 Accuracy with Test data
@@ -143,8 +148,8 @@ json_file = root + "/results/rbfn_data(" + str(n_cent) + "-" + str(accuracy) + "
 try:
     with open(json_file, 'r') as f:
         data = json.load(f)
-        centroids = data['Centroids']
-        W = data['W']
+        centroids = np.array(data['Centroids'])
+        W = np.array(data['W'])
         sigma = data['sigma']
 except IOError:
     centroids, W, sigma = train_data(X_pca_train, Y_pca_train, n_centroids=n_cent)
