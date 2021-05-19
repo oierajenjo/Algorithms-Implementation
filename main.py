@@ -16,10 +16,10 @@ root = os.getcwd()
 file_all = '/data/allData.csv'
 file_noisy = '/data/allNoisyData.csv'  # One noisy tests
 file_noisy2 = '/data/allNoisyData2.csv'  # Two noisy tests
-file_merged = '/data/mergedData(' + str(accuracy) + ').csv'
-file_train = '/data/trainData(' + str(accuracy) + ').csv'
-file_val = '/data/validationData(' + str(accuracy) + ').csv'
-file_test = '/data/testData(' + str(accuracy) + ').csv'
+file_merged = '/results/mergedData(' + str(accuracy) + ').csv'
+file_train = '/results/trainData(' + str(accuracy) + ').csv'
+file_val = '/results/validationData(' + str(accuracy) + ').csv'
+file_test = '/results/testData(' + str(accuracy) + ').csv'
 
 # The noisy data file to be used
 file_used = file_noisy2
@@ -161,9 +161,14 @@ except IOError:
 # All together
 X_pca_test, Y_pca_test = get_XY(pca_test, amount_pcs)
 t1_start = process_time()
-prediction = make_prediction(X_pca_test, centroids, sigma, W)
+prediction = make_prediction(X_pca_test, centroids, W, sigma)
 score = accuracy_score(prediction, Y_pca_test) * 100
 t1_stop = process_time()
+
+f = open("results/testResults(" + str(n_cent) + "-" + str(accuracy) + ").txt", 'w+')
+f.write("%d centroids not noisy + 2 noisy data tests\nAll test samples together\nTesting time in seconds: %.7f\n"
+        % (n_cent, t1_stop - t1_start))
+f.write("Accuracy: " + str(score) + "%\r\n")
 print("Testing time in seconds: ", t1_stop - t1_start)
 print("Accuracy: " + str(score) + "%")
 
@@ -173,7 +178,7 @@ test_scores = []
 for i in range(len(pca_test.index)):
     X_pca_test, Y_pca_test = get_XY(pca_test.loc[pca_test.index == i], amount_pcs)
     t1_start = process_time()
-    prediction = make_prediction(X_pca_test, centroids, sigma, W)
+    prediction = make_prediction(X_pca_test, centroids, W, sigma)
     score = int(prediction == Y_pca_test) * 100
     t1_stop = process_time()
     times.append(t1_stop - t1_start)
@@ -181,6 +186,9 @@ for i in range(len(pca_test.index)):
 
 print("Mean testing time in seconds per sample: ", np.mean(times))
 print("Mean accuracy: " + str(np.mean(test_scores)) + "%")
+f.write("One test sample at a time\nTesting time in seconds: %.7f\n" % np.mean(times))
+f.write("Accuracy: " + str(np.mean(test_scores)) + "%\r\n")
+f.close()
 
 # Plotting centroids
 fig = plot_centroids(pca_train, centroids, 'results/' + str(n_cent) + 'CentroidsTrain-Optimal.png')
