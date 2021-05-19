@@ -36,8 +36,7 @@ def reductionPCA(X, accuracy):
         amount_pcs += 1
         if val >= accuracy:
             break
-    print(val)
-    print(amount_pcs)
+    print("Accuracy with " + str(amount_pcs) + " amount of centroids: " + str(val))
 
     # Applying PCA
     pca = PCA(n_components=amount_pcs)

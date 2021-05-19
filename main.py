@@ -57,13 +57,13 @@ if not os.path.exists(root + file_val) or not os.path.exists(root + file_train) 
     PCA
     If don't want to implement PCA comment this part
     """
-    pc_X, explained_variance, amount_pcs = reductionPCA(s_X, accuracy)
+    X, explained_variance, amount_pcs = reductionPCA(s_X, accuracy)
 
     """
     SEPARATE DATA
     Data samples are separated in train, validation and test data
     """
-    X_all, X_train, Y_train, X_val, Y_val, X_test, Y_test = set_train_validation_testData(pc_X, Y, amount_pcs
+    X_all, X_train, Y_train, X_val, Y_val, X_test, Y_test = set_train_validation_testData(X, Y, amount_pcs
                                                                                           , test_val_size)
     print("Total amount of samples: ", X_all.shape[0])
     print("Amount of Train samples: ", X_train.shape[0])
@@ -81,7 +81,7 @@ else:
     X_test, Y_test = read_csv_data(root + file_test)
 
 amount_pcs = len(X_train.columns)
-print(amount_pcs)
+print("Amount of centroids:", amount_pcs)
 
 """
 PCA Matrix
