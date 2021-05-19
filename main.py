@@ -9,8 +9,17 @@ from PCA.reductionPCA import reductionPCA, plotting, standardise
 from RBFN.classifierRBFN import train_data, make_prediction, get_XY, amount_centroids, plot_centroids
 from Resources.functions import *
 
+"""
+GLOBAL VARIABLES
+If any needed change do it here
+"""
 accuracy = 0.995  # Accuracy for the PCA
 test_val_size = 0.02  # Percentage assigned to
+
+# Accuracy per amount of centroid
+cent_max = 100
+step = 1
+init_cent = 2
 
 root = os.getcwd()
 file_all = '/data/allData.csv'
@@ -98,7 +107,7 @@ pca_test = pca_df(X_test, Y_test)
 
 # Plotting PCA training data
 fig, ax = plotting(pca_all)
-ax.set_title('3 component PCA All', fontsize=20)
+ax.set_title('PCA All Data', fontsize=20)
 ax.legend(['Non Faulty', 'Faulty'])
 fig.show()
 fig.savefig('results/3D/3d-PCA_All(' + str(accuracy) + ').png')
@@ -108,11 +117,6 @@ RBFN
 Instead of validation use test data
 If don't want to implement RBFN comment this part until end
 """
-# Accuracy per amount of centroid
-cent_max = 100
-step = 1
-init_cent = 2
-
 json_file = root + "/results/score_cent(" + str(init_cent) + "-" + str(cent_max) + "-" + str(accuracy) \
             + str(amount_pcs) + ").json"
 try:
@@ -195,8 +199,9 @@ f.write("Accuracy: " + str(np.mean(test_scores)) + "%\r\n")
 f.close()
 
 # Plotting centroids
-fig = plot_centroids(pca_train, centroids, 'results/CentroidsTrain-Optimal(' + str(n_cent) + '-' + str(accuracy) + '-'
-                     + str(amount_pcs) + ').png')
+fig = plot_centroids(pca_train, centroids, 'Centroids and Training data', 'results/CentroidsTrain-Optimal(' + str(n_cent)
+                     + '-' + str(accuracy) + '-' + str(amount_pcs) + ').png')
 fig.show()
-fig = plot_centroids(pca_test, centroids, 'results/CentroidsTest-Optimal(' + str(n_cent) + '-' + str(accuracy) + '-'
-                     + str(amount_pcs) + ').png')
+fig = plot_centroids(pca_test, centroids, 'Centroids and Testing data', 'results/CentroidsTest-Optimal(' + str(n_cent) +
+                     '-' + str(accuracy) + '-' + str(amount_pcs) + ').png')
+fig.show()
