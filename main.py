@@ -113,7 +113,8 @@ cent_max = 100
 step = 1
 init_cent = 2
 
-json_file = root + "/results/score_cent(" + str(init_cent) + "-" + str(cent_max) + "-" + str(accuracy) + ").json"
+json_file = root + "/results/score_cent(" + str(init_cent) + "-" + str(cent_max) + "-" + str(accuracy) \
+            + str(amount_pcs) + ").json"
 try:
     with open(json_file, 'r') as f:
         data = json.load(f)
@@ -131,8 +132,8 @@ except IOError:
     plt.ylabel('Accuracy [%]')
     plt.grid()
     plt.show()
-    fig.savefig('results/Accuracy-Centroids(' + str(init_cent) + "-" + str(cent_max) + "-" +
-                str(accuracy) + ').png')
+    fig.savefig("results/Accuracy-Centroids(" + str(init_cent) + "-" + str(cent_max) + "-" + str(accuracy) + "-"
+                + str(amount_pcs) + ").png")
     data = {'amountCentroids': c_all, 'accuracy': scores}
     with open(json_file, "w") as f:
         json.dump(data, f)
@@ -146,7 +147,7 @@ X_pca_train, Y_pca_train = get_XY(pca_train, amount_pcs)
 n_cent = c_all[scores.index(max(scores))]
 
 # Save or retrieve centroids
-json_file = root + "/results/rbfn_data(" + str(n_cent) + "-" + str(accuracy) + ").json"
+json_file = root + "/results/rbfn_data(" + str(n_cent) + "-" + str(accuracy) + "-" + str(amount_pcs) + ").json"
 try:
     with open(json_file, 'r') as f:
         data = json.load(f)
@@ -167,9 +168,10 @@ prediction = make_prediction(X_pca_test, centroids, W, sigma)
 score = accuracy_score(prediction, Y_pca_test) * 100
 t1_stop = process_time()
 
-f = open("results/testResults(" + str(n_cent) + "-" + str(accuracy) + ").txt", 'w+')
-f.write("%d centroids not noisy + 2 noisy data tests\nAll test samples together\nTesting time in seconds: %.7f\n"
-        % (n_cent, t1_stop - t1_start))
+f = open("results/testResults(" + str(n_cent) + "-" + str(accuracy) + "-" + str(amount_pcs) + ").txt", 'w+')
+f.write("%d centroids, %d amount of PCs, not noisy + 2 noisy data tests\nAll test samples together\nTesting time in "
+        "seconds: %.7f\n "
+        % (n_cent, amount_pcs, t1_stop - t1_start))
 f.write("Accuracy: " + str(score) + "%\r\n")
 print("Testing time in seconds: ", t1_stop - t1_start)
 print("Accuracy: " + str(score) + "%")
@@ -193,7 +195,8 @@ f.write("Accuracy: " + str(np.mean(test_scores)) + "%\r\n")
 f.close()
 
 # Plotting centroids
-fig = plot_centroids(pca_train, centroids, 'results/' + str(n_cent) + 'CentroidsTrain-Optimal.png')
+fig = plot_centroids(pca_train, centroids, 'results/CentroidsTrain-Optimal(' + str(n_cent) + '-' + str(accuracy) + '-'
+                     + str(amount_pcs) + ').png')
 fig.show()
-fig = plot_centroids(pca_test, centroids, 'results/' + str(n_cent) + 'CentroidsTest-Optimal.png')
-fig.show()
+fig = plot_centroids(pca_test, centroids, 'results/CentroidsTest-Optimal(' + str(n_cent) + '-' + str(accuracy) + '-'
+                     + str(amount_pcs) + ').png')
