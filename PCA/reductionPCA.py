@@ -1,4 +1,6 @@
 # https://stackabuse.com/implementing-pca-in-python-with-scikit-learn/
+from time import process_time
+
 from matplotlib import pyplot as plt
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
@@ -39,10 +41,18 @@ def reductionPCA(X, accuracy):
     print("Accuracy with " + str(amount_pcs) + " amount of centroids: " + str(val))
 
     # Applying PCA
+    t1_start = process_time()
     pca = PCA(n_components=amount_pcs)
     pc_x = pca.fit_transform(X)
     # ex_var = pca.explained_variance_ratio_
-
+    t1_stop = process_time()
+    f = open("results/PCAResults(" + str(accuracy) + "-" + str(amount_pcs) + ").txt", 'w+')
+    f.write(
+        "%d amount of PCs, %.4f accuracy, not noisy + 2 noisy data tests\nAll test samples together\nTime needed for "
+        "all PCA in seconds: %.7f\n"
+        % (amount_pcs, accuracy, t1_stop - t1_start))
+    f.write("Time needed for one PCA sample in seconds: %.7f\n " % ((t1_stop - t1_start)/len(pc_x)))
+    f.close()
     return pc_x, explained_variance, amount_pcs
 
 
