@@ -117,13 +117,13 @@ RBFN
 Instead of validation use test data
 If don't want to implement RBFN comment this part until end
 """
-json_file = root + "/results/score_cent(" + str(init_cent) + "-" + str(cent_max) + "-" + str(accuracy) \
+json_file = root + "/results/score_cent(" + str(init_cent) + "-" + str(cent_max) + "-" + str(accuracy) + "-" \
             + str(amount_pcs) + ").json"
 try:
     with open(json_file, 'r') as f:
         data = json.load(f)
-        c_all = data['amountCentroids']
-        scores = data['accuracy']
+    c_all = data['amountCentroids']
+    scores = data['accuracy']
 except IOError:
     scores, c_all = amount_centroids(pca_train, pca_validation, amount_pcs, cent_max, step=step)
     # Plotting accuracy per Amount of Centroids
