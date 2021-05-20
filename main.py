@@ -149,6 +149,7 @@ Accuracy with Test data
 # Train
 X_pca_train, Y_pca_train = get_XY(pca_train, amount_pcs)
 n_cent = c_all[scores.index(max(scores))]
+print("Amount of Centroids:", n_cent)
 
 # Save or retrieve centroids
 json_file = root + "/results/rbfn_data(" + str(n_cent) + "-" + str(accuracy) + "-" + str(amount_pcs) + ").json"
@@ -174,7 +175,7 @@ t1_stop = process_time()
 
 f = open("results/testResults(" + str(n_cent) + "-" + str(accuracy) + "-" + str(amount_pcs) + ").txt", 'w+')
 f.write("%d centroids, %d amount of PCs, not noisy + 2 noisy data tests\nAll test samples together\nTesting time in "
-        "seconds: %.7f\n "
+        "seconds: %.7f\n"
         % (n_cent, amount_pcs, t1_stop - t1_start))
 f.write("Accuracy: " + str(score) + "%\r\n")
 print("Testing time in seconds: ", t1_stop - t1_start)
