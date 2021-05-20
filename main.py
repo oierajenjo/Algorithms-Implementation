@@ -126,22 +126,24 @@ try:
     scores = data['accuracy']
 except IOError:
     scores, c_all = amount_centroids(pca_train, pca_validation, amount_pcs, cent_max, step=step)
-    # Plotting accuracy per Amount of Centroids
-    fig, ax = plt.subplots()
-    ax.plot(c_all, scores)
-    plt.xlim(init_cent, cent_max)
-    plt.ylim(0, 100)
-    plt.title('Accuracy per Amount of Centroids')
-    plt.xlabel('Amount of Centroids')
-    plt.ylabel('Accuracy [%]')
-    plt.grid()
-    plt.show()
-    fig.savefig("results/Accuracy-Centroids(" + str(init_cent) + "-" + str(cent_max) + "-" + str(accuracy) + "-"
-                + str(amount_pcs) + ").png")
     data = {'amountCentroids': c_all, 'accuracy': scores}
     with open(json_file, "w") as f:
         json.dump(data, f)
 
+# Plotting accuracy per Amount of Centroids
+fig, ax = plt.subplots()
+ax.plot(c_all, scores)
+plt.xlim(init_cent, cent_max)
+plt.ylim(top=100)
+plt.title('Accuracy per Amount of Centroids', fontsize=14)
+plt.xlabel('Amount of Centroids', fontsize=14)
+plt.ylabel('Accuracy [%]', fontsize=14)
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
+plt.grid()
+plt.show()
+fig.savefig("results/Accuracy-Centroids(" + str(init_cent) + "-" + str(cent_max) + "-" + str(accuracy) + "-"
+            + str(amount_pcs) + ").png")
 """
 RBFN
 Accuracy with Test data
