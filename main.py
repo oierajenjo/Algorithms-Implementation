@@ -144,6 +144,7 @@ plt.grid()
 plt.show()
 fig.savefig("results/Accuracy-Centroids(" + str(init_cent) + "-" + str(cent_max) + "-" + str(accuracy) + "-"
             + str(amount_pcs) + ").png")
+
 """
 RBFN
 Accuracy with Test data
@@ -177,8 +178,7 @@ t1_stop = process_time()
 
 f = open("results/testResults(" + str(n_cent) + "-" + str(accuracy) + "-" + str(amount_pcs) + ").txt", 'w+')
 f.write("%d centroids, %d amount of PCs, not noisy + 2 noisy data tests\nAll test samples together\nTesting time in "
-        "seconds: %.7f\n"
-        % (n_cent, amount_pcs, t1_stop - t1_start))
+        "seconds: %.7f\n" % (n_cent, amount_pcs, t1_stop - t1_start))
 f.write("Accuracy: " + str(score) + "%\r\n")
 print("Testing time in seconds: ", t1_stop - t1_start)
 print("Accuracy: " + str(score) + "%")
