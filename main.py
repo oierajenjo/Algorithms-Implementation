@@ -108,7 +108,7 @@ pca_test = pca_df(X_test, Y_test)
 # Plotting PCA training data
 fig, ax = plotting(pca_all)
 ax.set_title('PCA All Data', fontsize=20)
-ax.legend(['Non Faulty', 'Faulty'])
+ax.legend(['Non-Faulty', 'Faulty'])
 fig.show()
 fig.savefig('results/3D/3d-PCA_All(' + str(accuracy) + ').png')
 
